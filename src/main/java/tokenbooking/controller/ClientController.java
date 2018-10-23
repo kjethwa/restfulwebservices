@@ -20,13 +20,18 @@ public class ClientController {
     }
 
     @GetMapping("{clientId}")
-    public Client getClientById(@PathVariable String clientId){
+    public Client getClientById(@PathVariable Long clientId){
         return clientService.getClientById(clientId);
     }
 
     @PostMapping
     public void addClient(@RequestBody Client client){
         clientService.addClient(client);
+    }
+
+    @PutMapping
+    public void updateClient(@RequestBody Client client){
+        clientService.updateClient(client);
     }
 
 }

@@ -1,7 +1,9 @@
 package tokenbooking.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokenbooking.model.Client;
+import tokenbooking.repository.ClientRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,17 +12,22 @@ import java.util.List;
 @Service
 public class ClientService {
 
-    private List<Client> allclients = new ArrayList<>(Arrays.asList(new Client("123", "Dr. Mehta"), new Client("124", "Mawali bhai dosa")));
+    @Autowired
+    private ClientRepository clientRepository;
 
     public List<Client> getAllClients() {
-        return allclients;
+        return clientRepository.findAll();
     }
 
-    public Client getClientById(final String clientId) {
-        return allclients.stream().filter(c -> c.getClientId().equals(clientId)).findAny().get();
+    public Client getClientById(final Long clientId) {
+        return clientRepository.findOne(clientId);
     }
 
     public void addClient(Client client) {
-        allclients.add(client);
+        clientRepository.save(client);
+    }
+
+    public void updateClient(Client client) {
+        clientRepository.save(client);
     }
 }

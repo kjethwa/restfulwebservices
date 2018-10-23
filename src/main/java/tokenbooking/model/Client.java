@@ -1,10 +1,15 @@
 package tokenbooking.model;
 
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
 public class Client {
-    private String clientId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long clientId;
     private String clientName;
     private String ownerFirstName;
     private String ownerLastName;
@@ -24,12 +29,13 @@ public class Client {
     private String latitude;
     private String longitude;
 
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<ClientOperation> daysOfOperation;
 
     public Client() {
     }
 
-    public Client(String clientId, String clientName) {
+    public Client(Long clientId, String clientName) {
         this.clientId = clientId;
         this.clientName = clientName;
     }
@@ -170,11 +176,11 @@ public class Client {
         this.longitude = longitude;
     }
 
-    public String getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 
-    public void setClientId(String clientId) {
+    public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
 

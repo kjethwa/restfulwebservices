@@ -1,18 +1,26 @@
 package tokenbooking.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class ClientOperation {
 
-    private String operationId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long operationId;
     private String day;
     private String noOfTokens;
     private String fromTime;
     private String toTime;
 
-    public String getOperationId() {
+    public Long getOperationId() {
         return operationId;
     }
 
-    public void setOperationId(String operationId) {
+    public void setOperationId(Long operationId) {
         this.operationId = operationId;
     }
 
