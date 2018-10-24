@@ -32,14 +32,6 @@ public class Client {
     @OneToMany(cascade = {CascadeType.ALL})
     private List<ClientOperation> daysOfOperation;
 
-    public Client() {
-    }
-
-    public Client(Long clientId, String clientName) {
-        this.clientId = clientId;
-        this.clientName = clientName;
-    }
-
     public String getOwnerFirstName() {
         return ownerFirstName;
     }
