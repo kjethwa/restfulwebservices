@@ -15,7 +15,7 @@ public class Client {
     private String ownerLastName;
     private String clientCategory;
     private String status;
-    private String prebookingHours;
+    private Integer prebookingHours;
     private String houseNo;
     private String street;
     private String street1;
@@ -31,14 +31,6 @@ public class Client {
 
     @OneToMany(cascade = {CascadeType.ALL})
     private List<ClientOperation> daysOfOperation;
-
-    public Client() {
-    }
-
-    public Client(Long clientId, String clientName) {
-        this.clientId = clientId;
-        this.clientName = clientName;
-    }
 
     public String getOwnerFirstName() {
         return ownerFirstName;
@@ -72,11 +64,11 @@ public class Client {
         this.status = status;
     }
 
-    public String getPrebookingHours() {
+    public Integer getPrebookingHours() {
         return prebookingHours;
     }
 
-    public void setPrebookingHours(String prebookingHours) {
+    public void setPrebookingHours(Integer prebookingHours) {
         this.prebookingHours = prebookingHours;
     }
 

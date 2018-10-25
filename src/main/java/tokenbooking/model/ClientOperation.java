@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Time;
 
 @Entity
 public class ClientOperation {
@@ -12,9 +13,9 @@ public class ClientOperation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long operationId;
     private String day;
-    private String noOfTokens;
-    private String fromTime;
-    private String toTime;
+    private Integer noOfTokens;
+    private Time fromTime;
+    private Time toTime;
 
     public Long getOperationId() {
         return operationId;
@@ -32,27 +33,27 @@ public class ClientOperation {
         this.day = day;
     }
 
-    public String getNoOfTokens() {
+    public Integer getNoOfTokens() {
         return noOfTokens;
     }
 
-    public void setNoOfTokens(String noOfTokens) {
+    public void setNoOfTokens(Integer noOfTokens) {
         this.noOfTokens = noOfTokens;
     }
 
-    public String getFromTime() {
+    public Time getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(String fromTime) {
+    public void setFromTime(Time fromTime) {
         this.fromTime = fromTime;
     }
 
-    public String getToTime() {
+    public Time getToTime() {
         return toTime;
     }
 
-    public void setToTime(String toTime) {
+    public void setToTime(Time toTime) {
         this.toTime = toTime;
     }
 }
