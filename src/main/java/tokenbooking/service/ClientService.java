@@ -8,7 +8,7 @@ import tokenbooking.model.ClientSearchDetails;
 import tokenbooking.repository.ClientRepository;
 import tokenbooking.specification.UserSpecificationsBuilder;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +35,7 @@ public class ClientService {
         clientRepository.save(client);
     }
 
-    public List<Client> getClientSearchResult(String search) {
+    public List<ClientSearchDetails> getClientSearchResult(String search) {
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
         Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
@@ -44,6 +44,17 @@ public class ClientService {
         }
 
         Specification<Client> spec = builder.build();
-        return clientRepository.findAll(spec);
+        List<Client> listOfClient = clientRepository.findAll(spec);
+        return getClientSearchDetailsResult(listOfClient);
     }
+
+    private List<ClientSearchDetails> getClientSearchDetailsResult(List<Client> listOfClient) {
+        List<ClientSearchDetails> resultClientSearch = new ArrayList<>(listOfClient.size());
+        for (Client client : listOfClient) {
+            ClientSearchDetails temp = new ClientSearchDetails(client.getClientId(), client.getClientName(), client.getOwnerFirstName(), client.getOwnerLastName(), client.getCity(), client.getState(), client.getStatus());
+            resultClientSearch.add(temp);
+        }
+        return resultClientSearch;
+    }
+
 }
