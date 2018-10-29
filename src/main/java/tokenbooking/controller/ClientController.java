@@ -8,6 +8,7 @@ import tokenbooking.service.ClientService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/clients")
 public class ClientController {
 

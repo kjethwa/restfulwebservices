@@ -1,10 +1,14 @@
 package tokenbooking.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Time;
+import java.time.LocalTime;
 
 @Entity
 public class ClientOperation {
@@ -14,8 +18,10 @@ public class ClientOperation {
     private Long operationId;
     private String day;
     private Integer noOfTokens;
-    private Time fromTime;
-    private Time toTime;
+    @DateTimeFormat(pattern = "hh:mm:ss")
+    private LocalTime fromTime;
+    @DateTimeFormat(pattern = "hh:mm:ss")
+    private LocalTime toTime;
 
     public Long getOperationId() {
         return operationId;
@@ -41,19 +47,19 @@ public class ClientOperation {
         this.noOfTokens = noOfTokens;
     }
 
-    public Time getFromTime() {
+    public LocalTime getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(Time fromTime) {
+    public void setFromTime(LocalTime fromTime) {
         this.fromTime = fromTime;
     }
 
-    public Time getToTime() {
+    public LocalTime getToTime() {
         return toTime;
     }
 
-    public void setToTime(Time toTime) {
+    public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
     }
 }
