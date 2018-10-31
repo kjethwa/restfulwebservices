@@ -1,14 +1,12 @@
 package tokenbooking.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
+import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Time;
-import java.time.LocalTime;
 
 @Entity
 public class ClientOperation {
@@ -18,10 +16,14 @@ public class ClientOperation {
     private Long operationId;
     private String day;
     private Integer noOfTokens;
-    @DateTimeFormat(pattern = "hh:mm:ss")
-    private LocalTime fromTime;
-    @DateTimeFormat(pattern = "hh:mm:ss")
-    private LocalTime toTime;
+
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    private Time fromTime;
+
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    private Time toTime;
 
     public Long getOperationId() {
         return operationId;
@@ -47,19 +49,19 @@ public class ClientOperation {
         this.noOfTokens = noOfTokens;
     }
 
-    public LocalTime getFromTime() {
+    public Time getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(LocalTime fromTime) {
+    public void setFromTime(Time fromTime) {
         this.fromTime = fromTime;
     }
 
-    public LocalTime getToTime() {
+    public Time getToTime() {
         return toTime;
     }
 
-    public void setToTime(LocalTime toTime) {
+    public void setToTime(Time toTime) {
         this.toTime = toTime;
     }
 }
