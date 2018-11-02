@@ -16,7 +16,8 @@ public class LocalTimeSerializer extends StdSerializer<Time> {
     @Override
     public void serialize(Time value, JsonGenerator generator, SerializerProvider provider) throws IOException {
         if(!StringUtils.isEmpty(value)){
-            generator.writeString(value.toString());
+            String temp = value.toString();
+            generator.writeString(temp.substring(0,temp.lastIndexOf(':')));
         }
     }
 }

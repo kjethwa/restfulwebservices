@@ -51,7 +51,7 @@ public class ClientService {
     private List<ClientSearchDetails> getClientSearchDetailsResult(List<Client> listOfClient) {
         List<ClientSearchDetails> resultClientSearch = new ArrayList<>(listOfClient.size());
         for (Client client : listOfClient) {
-            ClientSearchDetails temp = new ClientSearchDetails(client.getClientCategory(), client.getClientName(), client.getOwnerFirstName(), client.getOwnerLastName(), client.getCity(), client.getState(), client.getStatus());
+            ClientSearchDetails temp = new ClientSearchDetails(client.getClientId(), client.getClientCategory(), client.getClientName(), client.getOwnerFirstName(), client.getOwnerLastName(), client.getCity(), client.getState(), client.getStatus());
             resultClientSearch.add(temp);
         }
         return resultClientSearch;

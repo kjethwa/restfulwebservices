@@ -2,6 +2,7 @@ package tokenbooking.model;
 
 public class ClientSearchDetails {
 
+    private Long clientId;
     private String clientName;
     private String ownerFirstName;
     private String ownerLastName;
@@ -10,7 +11,8 @@ public class ClientSearchDetails {
     private String state;
     private String city;
 
-    public ClientSearchDetails(String clientCategory, String clientName, String ownerFirstName, String ownerLastName, String city, String state, String status) {
+    public ClientSearchDetails(Long clientId,String clientCategory, String clientName, String ownerFirstName, String ownerLastName, String city, String state, String status) {
+        this.clientId = clientId;
         this.clientCategory = clientCategory;
         this.clientName = clientName;
         this.ownerFirstName = ownerFirstName;
@@ -18,6 +20,14 @@ public class ClientSearchDetails {
         this.city = city;
         this.state = state;
         this.status = status;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 
     public String getClientName() {
