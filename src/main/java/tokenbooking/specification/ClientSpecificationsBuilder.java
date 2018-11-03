@@ -7,15 +7,15 @@ import tokenbooking.model.Client;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserSpecificationsBuilder {
+public class ClientSpecificationsBuilder {
 
     private final List<SearchCriteria> params;
 
-    public UserSpecificationsBuilder() {
+    public ClientSpecificationsBuilder() {
         params = new ArrayList<>();
     }
 
-    public UserSpecificationsBuilder with(String key, String operation, Object value) {
+    public ClientSpecificationsBuilder with(String key, String operation, Object value) {
         params.add(new SearchCriteria(key, operation, value));
         return this;
     }
@@ -27,7 +27,7 @@ public class UserSpecificationsBuilder {
 
         List<Specification<Client>> specs = new ArrayList<>();
         for (SearchCriteria param : params) {
-            specs.add(new UserSpecification(param));
+            specs.add(new ClientSpecification(param));
         }
 
         Specification<Client> result = specs.get(0);

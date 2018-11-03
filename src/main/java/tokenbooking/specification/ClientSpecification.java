@@ -8,11 +8,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-public class UserSpecification implements Specification<Client> {
+public class ClientSpecification implements Specification<Client> {
 
     private SearchCriteria criteria;
 
-    public UserSpecification(SearchCriteria criteria) {
+    public ClientSpecification(SearchCriteria criteria) {
         this.criteria = criteria;
     }
 

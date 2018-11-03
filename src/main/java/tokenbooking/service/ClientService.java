@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import tokenbooking.model.Client;
 import tokenbooking.model.ClientSearchDetails;
 import tokenbooking.repository.ClientRepository;
-import tokenbooking.specification.UserSpecificationsBuilder;
+import tokenbooking.specification.ClientSpecificationsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class ClientService {
     }
 
     public List<ClientSearchDetails> getClientSearchResult(String search) {
-        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+        ClientSpecificationsBuilder builder = new ClientSpecificationsBuilder();
         Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
         while (matcher.find()) {
