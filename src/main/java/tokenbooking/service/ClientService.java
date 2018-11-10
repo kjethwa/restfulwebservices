@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import tokenbooking.model.Client;
+import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.model.ClientSearchDetails;
+import tokenbooking.model.Constants;
 import tokenbooking.repository.ClientRepository;
 import tokenbooking.specification.ClientSpecificationsBuilder;
 
@@ -48,6 +50,10 @@ public class ClientService {
         return getClientSearchDetailsResult(listOfClient);
     }
 
+    public List<ClientNameAndId> getListOfAllActiveClients() {
+        return new ArrayList<>(clientRepository.findByStatus(Constants.ACTIVE));
+    }
+
     private List<ClientSearchDetails> getClientSearchDetailsResult(List<Client> listOfClient) {
         List<ClientSearchDetails> resultClientSearch = new ArrayList<>(listOfClient.size());
         for (Client client : listOfClient) {
@@ -56,5 +62,4 @@ public class ClientService {
         }
         return resultClientSearch;
     }
-
 }
