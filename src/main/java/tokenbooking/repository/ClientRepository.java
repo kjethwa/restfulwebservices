@@ -10,4 +10,6 @@ public interface ClientRepository extends JpaRepository<Client,Long> ,JpaSpecifi
 
     Collection<ClientNameAndId> findByStatus(String status);
 
+    Collection<ClientIdNameAddress> findByStatusAndClientId(String status,Long clientId);
+
 }

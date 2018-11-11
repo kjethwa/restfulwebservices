@@ -7,18 +7,20 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.time.LocalTime;
 
-public class LocalTimeDeserializer extends StdDeserializer<Time> {
+public class LocalTimeDeserializer extends StdDeserializer<LocalTime> {
     protected LocalTimeDeserializer() {
-        super(Time.class);
+        super(LocalTime.class);
     }
 
     @Override
-    public Time deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+    public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         String temp = parser.readValueAs(String.class);
         if (StringUtils.isEmpty(temp)) {
             return null;
         }
-        return Time.valueOf(temp + ":00");
+        LocalTime lt = LocalTime.parse(temp);
+        return LocalTime.parse(temp);
     }
 }

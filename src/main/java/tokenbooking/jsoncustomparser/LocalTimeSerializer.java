@@ -7,17 +7,18 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.time.LocalTime;
 
-public class LocalTimeSerializer extends StdSerializer<Time> {
+public class LocalTimeSerializer extends StdSerializer<LocalTime> {
     public LocalTimeSerializer() {
-        super(Time.class);
+        super(LocalTime.class);
     }
 
     @Override
-    public void serialize(Time value, JsonGenerator generator, SerializerProvider provider) throws IOException {
+    public void serialize(LocalTime value, JsonGenerator generator, SerializerProvider provider) throws IOException {
         if(!StringUtils.isEmpty(value)){
             String temp = value.toString();
-            generator.writeString(temp.substring(0,temp.lastIndexOf(':')));
+            generator.writeString(temp);
         }
     }
 }

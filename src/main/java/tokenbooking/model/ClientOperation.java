@@ -7,6 +7,8 @@ import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 @Entity
 public class ClientOperation {
@@ -14,16 +16,16 @@ public class ClientOperation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long operationId;
-    private String day;
+    private DayOfWeek day;
     private Integer noOfTokens;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     @JsonSerialize(using = LocalTimeSerializer.class)
-    private Time fromTime;
+    private LocalTime fromTime;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     @JsonSerialize(using = LocalTimeSerializer.class)
-    private Time toTime;
+    private LocalTime toTime;
 
     public Long getOperationId() {
         return operationId;
@@ -33,11 +35,11 @@ public class ClientOperation {
         this.operationId = operationId;
     }
 
-    public String getDay() {
+    public DayOfWeek getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(DayOfWeek day) {
         this.day = day;
     }
 
@@ -49,19 +51,19 @@ public class ClientOperation {
         this.noOfTokens = noOfTokens;
     }
 
-    public Time getFromTime() {
+    public LocalTime getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(Time fromTime) {
+    public void setFromTime(LocalTime fromTime) {
         this.fromTime = fromTime;
     }
 
-    public Time getToTime() {
+    public LocalTime getToTime() {
         return toTime;
     }
 
-    public void setToTime(Time toTime) {
+    public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
     }
 }

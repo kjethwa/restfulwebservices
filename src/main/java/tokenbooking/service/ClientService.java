@@ -3,10 +3,11 @@ package tokenbooking.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import tokenbooking.model.Client;
+import tokenbooking.repository.ClientIdNameAddress;
 import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.model.ClientSearchDetails;
-import tokenbooking.model.Constants;
 import tokenbooking.repository.ClientRepository;
 import tokenbooking.specification.ClientSpecificationsBuilder;
 
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static tokenbooking.model.Constants.ACTIVE;
 
 @Service
 public class ClientService {
@@ -51,7 +54,16 @@ public class ClientService {
     }
 
     public List<ClientNameAndId> getListOfAllActiveClients() {
-        return new ArrayList<>(clientRepository.findByStatus(Constants.ACTIVE));
+        return new ArrayList<>(clientRepository.findByStatus(ACTIVE));
+    }
+
+    public ClientIdNameAddress getClientNameAndAddressSummary(Long clientId) throws Exception {
+        List<ClientIdNameAddress> clientIdNameAddresses = new ArrayList<>(clientRepository.findByStatusAndClientId(ACTIVE, clientId));
+        if (StringUtils.isEmpty(clientIdNameAddresses) || clientIdNameAddresses.size() != 1) {
+            throw new Exception("Invalid Client Id");
+        }
+
+        return clientIdNameAddresses.iterator().next();
     }
 
     private List<ClientSearchDetails> getClientSearchDetailsResult(List<Client> listOfClient) {
