@@ -1,6 +1,5 @@
 package tokenbooking.service;
 
-import com.sun.corba.se.spi.extension.ZeroPortPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokenbooking.model.Client;
@@ -31,7 +30,7 @@ public class SessionService {
     public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId) throws Exception {
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
-        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, getCurrentDate(), getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, getCurrentDate(), getEndDate(), Arrays.asList(CREATED,ACTIVE, INPROGRESS)));
 
         checkAllSessionIsPresentOrCreate(allAvailableSessions,clientId);
 
