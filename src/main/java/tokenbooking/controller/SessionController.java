@@ -36,7 +36,7 @@ public class SessionController {
         return null;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+   /* @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/sessions", method = RequestMethod.POST)
     public SessionDetails saveSessionDetails(@RequestBody SessionDetails sessionDetails) {
         return sessionService.save(sessionDetails);
@@ -46,5 +46,5 @@ public class SessionController {
     @RequestMapping(value = "/sessions/{sessionId}", method = RequestMethod.GET)
     public SessionDetails getSession(@PathVariable Long sessionId) {
         return sessionService.getSessionDetails(sessionId);
-    }
+    }*/
 }

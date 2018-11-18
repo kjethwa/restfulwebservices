@@ -84,7 +84,7 @@ public class SessionService {
 
         //check the session if not present for the day create one
         LocalDate nextDate = getCurrentDate();
-        for (int i = 0; i < MAX_DAYS_OF_SESSION; i++) {
+        for (int i = 0; i <= MAX_DAYS_OF_SESSION; i++) {
             if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null && mapOfSessions.get(nextDate) == null) {
                 createSession(allAvailableSessions, nextDate, mapOfDaysOfOperation.get(nextDate.getDayOfWeek()), clientId);
             }

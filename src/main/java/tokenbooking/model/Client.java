@@ -1,14 +1,18 @@
 package tokenbooking.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientId;
     private String clientName;
     private String ownerFirstName;
@@ -29,8 +33,13 @@ public class Client {
     private String latitude;
     private String longitude;
 
-    @OneToMany(cascade = {CascadeType.ALL})
-    private List<ClientOperation> daysOfOperation;
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "client", cascade = {CascadeType.ALL})
+    public List<ClientOperation> daysOfOperation;
+
+    public Client() {
+
+    }
 
     public String getOwnerFirstName() {
         return ownerFirstName;
