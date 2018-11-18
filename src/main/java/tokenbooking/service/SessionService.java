@@ -2,6 +2,7 @@ package tokenbooking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import tokenbooking.model.Client;
 import tokenbooking.model.ClientAndSessionDetails;
 import tokenbooking.model.ClientOperation;
@@ -12,6 +13,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static tokenbooking.model.Constants.*;
 
@@ -85,12 +88,19 @@ public class SessionService {
         //check the session if not present for the day create one
         LocalDate nextDate = getCurrentDate();
         for (int i = 0; i < MAX_DAYS_OF_SESSION; i++) {
-            if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null && mapOfSessions.get(nextDate) == null) {
-                createSession(allAvailableSessions, nextDate, mapOfDaysOfOperation.get(nextDate.getDayOfWeek()), clientId);
+            if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null) {
+                Set<Long> presentOperationIds = new HashSet<>();
+                if (mapOfSessions.get(nextDate) != null)
+                   presentOperationIds = mapOfSessions.get(nextDate).stream().map(SessionDetails::getOperationId).collect(Collectors.toSet());
+
+                Set<Long> finalPresentOperationIds = presentOperationIds;
+                List<ClientOperation> clientOperationsToBeCreated = mapOfDaysOfOperation.get(nextDate.getDayOfWeek()).stream().filter(s -> !finalPresentOperationIds.contains(s.getOperationId())).collect(Collectors.toList());
+
+                createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId);
             }
+
             nextDate = nextDate.plusDays(1);
         }
-
     }
 
     private void checkIsSessionHasAllFieldsOrCopyFromClientDetails(List<SessionDetails> allAvailableSessions) throws Exception {
@@ -117,6 +127,9 @@ public class SessionService {
     }
 
     private boolean validateSessionStatus(SessionDetails sessionDetails) {
+        if(!clientService.getClientById(sessionDetails.getClientId()).getDaysOfOperation().stream().anyMatch(s -> s.getOperationId().equals(sessionDetails.getOperationId()))){
+            return false;
+        }
         if(sessionDetails.getDate().isAfter(getCurrentDate())){
             return true;
         }
