@@ -2,18 +2,14 @@ package tokenbooking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import tokenbooking.model.Client;
-import tokenbooking.model.ClientAndSessionDetails;
-import tokenbooking.model.ClientOperation;
-import tokenbooking.model.SessionDetails;
+import tokenbooking.model.*;
+import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.SessionDetailsRepository;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static tokenbooking.model.Constants.*;
@@ -30,16 +26,19 @@ public class SessionService {
     @Autowired
     SessionDetailsRepository sessionDetailsRepository;
 
-    public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId) throws Exception {
+    @Autowired
+    BookingRepository bookingRepository;
+
+    public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId,Long userId) throws Exception {
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, getCurrentDate(), getEndDate(), Arrays.asList(CREATED,ACTIVE, INPROGRESS)));
 
         checkAllSessionIsPresentOrCreate(allAvailableSessions,clientId);
 
-        checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions);
+        List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions,userId);
 
-        clientAndSessionDetails.setSessions(allAvailableSessions);
+        clientAndSessionDetails.setSessions(userSessionSummaries);
 
         return clientAndSessionDetails;
     }
@@ -87,7 +86,7 @@ public class SessionService {
 
         //check the session if not present for the day create one
         LocalDate nextDate = getCurrentDate();
-        for (int i = 0; i < MAX_DAYS_OF_SESSION; i++) {
+        for (int i = 0; i <= MAX_DAYS_OF_SESSION; i++) {
             if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null) {
                 Set<Long> presentOperationIds = new HashSet<>();
                 if (mapOfSessions.get(nextDate) != null)
@@ -103,26 +102,45 @@ public class SessionService {
         }
     }
 
-    private void checkIsSessionHasAllFieldsOrCopyFromClientDetails(List<SessionDetails> allAvailableSessions) throws Exception {
+    private List<UserSessionSummary> checkIsSessionHasAllFieldsOrCopyFromClientDetails(List<SessionDetails> allAvailableSessions, Long userId) throws Exception {
         Iterator<SessionDetails> iterator = allAvailableSessions.iterator();
-        while(iterator.hasNext()) {
+        List<UserSessionSummary> userSessionSummaries = new ArrayList<>(allAvailableSessions.size());
+        while (iterator.hasNext()) {
             SessionDetails sessionDetails = iterator.next();
-
+            UserSessionSummary userSessionSummary = new UserSessionSummary();
             if (sessionDetails.getStatus() == null) {
                 throw new Exception("Invalid session status");
             }
 
             if (CREATED.equals(sessionDetails.getStatus())) {
                 ClientOperation clientOperation = clientOperationService.getClientOperation(sessionDetails.getOperationId());
-                sessionDetails.setNoOfTokens(clientOperation.getNoOfTokens());
-                sessionDetails.setToTime(clientOperation.getToTime());
-                sessionDetails.setFromTime(clientOperation.getFromTime());
-                sessionDetails.setAvailableToken(clientOperation.getNoOfTokens());
+                userSessionSummary.setNoOfTokens(clientOperation.getNoOfTokens());
+                userSessionSummary.setToTime(clientOperation.getToTime());
+                userSessionSummary.setFromTime(clientOperation.getFromTime());
+                userSessionSummary.setAvailableToken(clientOperation.getNoOfTokens());
+                userSessionSummary.setSessionId(sessionDetails.getSessionId());
+                userSessionSummary.setDate(sessionDetails.getDate());
+
+                checkIsAlreadyBookedInSession(sessionDetails,userId,userSessionSummary);
             }
 
-            if(!validateSessionStatus(sessionDetails)){
-                iterator.remove();
+            if (validateSessionStatus(sessionDetails)) {
+                userSessionSummaries.add(userSessionSummary);
             }
+        }
+
+        return userSessionSummaries;
+    }
+
+    private void checkIsAlreadyBookedInSession(SessionDetails sessionDetails, Long userId, UserSessionSummary userSessionSummary) throws Exception {
+        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), userId, Arrays.asList(BOOKED, SUBMITTED));
+        if(bookingDetailList.size()>1){
+            throw new Exception("Multiple booking found in a session by a user");
+        }
+        if(bookingDetailList.size() == 1){
+            BookingDetails bookingDetails = bookingDetailList.iterator().next();
+            userSessionSummary.setBooked(true);
+            userSessionSummary.setTokenNumber(bookingDetails.getTokenNumber());
         }
     }
 
@@ -146,6 +164,7 @@ public class SessionService {
             sessionDetails.setDate(nextDate);
             sessionDetails.setOperationId(clientOperation.getOperationId());
             sessionDetails.setStatus(CREATED);
+            sessionDetails.setNextAvailableToken(ZERO);
 
             allAvailableSessions.add(sessionDetailsRepository.save(sessionDetails));
         }

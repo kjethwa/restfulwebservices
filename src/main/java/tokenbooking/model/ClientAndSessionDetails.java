@@ -8,7 +8,7 @@ public class ClientAndSessionDetails {
 
     private ClientIdNameAddress clientIdNameAddress;
 
-    private List<SessionDetails> sessions;
+    private List<UserSessionSummary> sessions;
 
     public ClientIdNameAddress getClientIdNameAddress() {
         return clientIdNameAddress;
@@ -18,11 +18,11 @@ public class ClientAndSessionDetails {
         this.clientIdNameAddress = clientIdNameAddress;
     }
 
-    public List<SessionDetails> getSessions() {
+    public List<UserSessionSummary> getSessions() {
         return sessions;
     }
 
-    public void setSessions(List<SessionDetails> sessions) {
+    public void setSessions(List<UserSessionSummary> sessions) {
         this.sessions = sessions;
     }
 }

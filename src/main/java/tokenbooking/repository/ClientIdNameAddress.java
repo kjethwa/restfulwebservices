@@ -1,8 +1,6 @@
 package tokenbooking.repository;
 
-import org.springframework.beans.factory.annotation.Value;
-
-public interface ClientIdNameAddress {
+public interface  ClientIdNameAddress {
     Long getClientId();
 
     String getClientName();
