@@ -12,9 +12,7 @@ import tokenbooking.repository.SessionDetailsRepository;
 
 import java.time.LocalDateTime;
 
-import static tokenbooking.model.Constants.BOOKED;
-import static tokenbooking.model.Constants.CREATED;
-import static tokenbooking.model.Constants.ZERO;
+import static tokenbooking.model.Constants.*;
 
 @Service
 public class BookingService {
@@ -77,6 +75,7 @@ public class BookingService {
         sessionDetails.setToTime(clientOperation.getToTime());
         sessionDetails.setNoOfTokens(clientOperation.getNoOfTokens());
         sessionDetails.setAvailableToken(clientOperation.getNoOfTokens());
+        sessionDetails.setNextAvailableToken(START_TOKEN_NUMBER);
     }
 
     private void updateBookingDetailsInSession(SessionDetails sessionDetails) {
@@ -86,6 +85,9 @@ public class BookingService {
         else
             sessionDetails.setNextAvailableToken(sessionDetails.getNextAvailableToken() + 1);
 
+        if(sessionDetails.getStatus().equals(CREATED)){
+            sessionDetails.setStatus(ACTIVE);
+        }
         sessionDetailsRepository.save(sessionDetails);
     }
 }
