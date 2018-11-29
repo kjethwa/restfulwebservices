@@ -7,8 +7,6 @@ import tokenbooking.model.ClientAndSessionDetails;
 import tokenbooking.model.SessionDetails;
 import tokenbooking.service.SessionService;
 
-import javax.websocket.server.PathParam;
-
 @RestController
 public class SessionController {
 
@@ -22,7 +20,7 @@ public class SessionController {
             if (StringUtils.isEmpty(userId)) {
                 throw new Exception("Invalid request");
             }
-            return sessionService.getSessionDetailsOfClientWithClientNameAndAddressSummary(clientId, userId);
+                return sessionService.getSessionDetailsOfClientWithClientNameAndAddressSummary(clientId, userId);
         } catch (Exception e) {
             e.printStackTrace();
         }

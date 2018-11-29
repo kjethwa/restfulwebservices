@@ -3,14 +3,16 @@ package tokenbooking.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import tokenbooking.model.BookingDetails;
-import tokenbooking.model.ClientOperation;
-import tokenbooking.model.SessionDetails;
+import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.ClientOperationRepository;
+import tokenbooking.repository.ClientRepository;
 import tokenbooking.repository.SessionDetailsRepository;
 
+import javax.validation.constraints.Max;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static tokenbooking.model.Constants.*;
 
@@ -25,6 +27,9 @@ public class BookingService {
 
     @Autowired
     ClientOperationRepository clientOperationRepository;
+
+    @Autowired
+    ClientRepository clientRepository;
 
     public synchronized BookingDetails bookToken(BookingDetails bookingDetails) throws Exception {
 
@@ -47,6 +52,33 @@ public class BookingService {
             updateBookingDetailsInSession(sessionDetails);
         }
         return bookingDetails;
+    }
+
+    public List<BookingSummary> getAllBookingOfUser(Long userId) {
+        List<BookingSummary> bookingSummaryList = new ArrayList<>();
+
+        List<BookingDetails> allBookings = new ArrayList<>(bookingRepository.findByUserId(userId));
+
+        allBookings.forEach(b -> bookingSummaryList.add(this.getBookingSummary(b)));
+
+        return bookingSummaryList;
+    }
+
+    private BookingSummary getBookingSummary(BookingDetails bookingDetails) {
+        BookingSummary bookingSummary = new BookingSummary();
+        SessionDetails sessionDetails = sessionDetailsRepository.getOne(bookingDetails.getSessionId());
+        Client client = clientRepository.findOne(sessionDetails.getClientId());
+
+        bookingSummary.setClientId(client.getClientId());
+        bookingSummary.setClientName(client.getClientName());
+        bookingSummary.setDate(sessionDetails.getDate());
+        bookingSummary.setFromTime(sessionDetails.getFromTime());
+        bookingSummary.setToTime(sessionDetails.getToTime());
+        bookingSummary.setStatus(bookingDetails.getStatus());
+        bookingSummary.setTokenNumber(bookingDetails.getTokenNumber());
+        bookingSummary.setBookingId(bookingDetails.getBookingId());
+
+        return bookingSummary;
     }
 
     private void validateBooking(BookingDetails bookingDetails, SessionDetails sessionDetails) throws Exception {
@@ -90,4 +122,5 @@ public class BookingService {
         }
         sessionDetailsRepository.save(sessionDetails);
     }
+
 }
