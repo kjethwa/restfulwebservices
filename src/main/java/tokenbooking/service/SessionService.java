@@ -118,12 +118,14 @@ public class SessionService {
                 userSessionSummary.setToTime(clientOperation.getToTime());
                 userSessionSummary.setFromTime(clientOperation.getFromTime());
                 userSessionSummary.setAvailableToken(clientOperation.getNoOfTokens());
+
+                sessionDetails.setToTime(clientOperation.getToTime());
             }
             else{
                 userSessionSummary.setNoOfTokens(sessionDetails.getNoOfTokens());
                 userSessionSummary.setToTime(sessionDetails.getToTime());
                 userSessionSummary.setFromTime(sessionDetails.getFromTime());
-                userSessionSummary.setAvailableToken(sessionDetails.getNoOfTokens());
+                userSessionSummary.setAvailableToken(sessionDetails.getAvailableToken());
             }
             userSessionSummary.setSessionId(sessionDetails.getSessionId());
             userSessionSummary.setDate(sessionDetails.getDate());
