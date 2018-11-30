@@ -27,7 +27,7 @@ public class BookingController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "users/{userId}/bookings", method = RequestMethod.POST)
+    @RequestMapping(value = "users/{userId}/bookings", method = RequestMethod.GET)
     public List<BookingSummary> getAllBookingsOfUser(@PathVariable Long userId) {
         return bookingService.getAllBookingOfUser(userId);
     }
