@@ -64,6 +64,14 @@ public class BookingService {
         return bookingSummaryList;
     }
 
+    public BookingSummary cancelBooking(Long bookingId) {
+        BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
+        bookingDetails.setStatus(CANCELLED);
+        bookingRepository.save(bookingDetails);
+
+        return getBookingSummary(bookingDetails);
+    }
+
     private BookingSummary getBookingSummary(BookingDetails bookingDetails) {
         BookingSummary bookingSummary = new BookingSummary();
         SessionDetails sessionDetails = sessionDetailsRepository.getOne(bookingDetails.getSessionId());
@@ -122,5 +130,4 @@ public class BookingService {
         }
         sessionDetailsRepository.save(sessionDetails);
     }
-
 }
