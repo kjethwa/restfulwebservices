@@ -37,4 +37,10 @@ public class BookingController {
     public BookingSummary cancelBooking(@PathVariable Long bookingId) {
         return bookingService.cancelBooking(bookingId);
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "submitBooking/{bookingId}", method = RequestMethod.PUT)
+    public BookingSummary submitBooking(@PathVariable Long bookingId) {
+        return bookingService.submitBooking(bookingId);
+    }
 }

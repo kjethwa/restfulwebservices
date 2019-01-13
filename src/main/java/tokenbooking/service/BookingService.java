@@ -1,5 +1,6 @@
 package tokenbooking.service;
 
+import Utils.HelperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -72,6 +73,24 @@ public class BookingService {
         return getBookingSummary(bookingDetails);
     }
 
+    public BookingSummary submitBooking(Long bookingId) {
+        BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
+        bookingDetails.setStatus(SUBMITTED);
+        bookingRepository.save(bookingDetails);
+
+        return getBookingSummary(bookingDetails);
+    }
+
+    public BookingDetails getBookingOfLastSequenceNumber(Long sessionId) {
+        BookingDetails bookingDetails = bookingRepository.findFirstBySessionIdAndSequenceNumberNotNullOrderBySequenceNumberDesc(sessionId);
+        return bookingDetails;
+    }
+
+    public BookingDetails getSubmittedBookingOfLeastTokenNumber(Long sessionId) {
+        BookingDetails bookingDetails = bookingRepository.findFirstBySessionIdAndStatusOrderByTokenNumberAsc(sessionId, SUBMITTED);
+        return bookingDetails;
+    }
+
     private BookingSummary getBookingSummary(BookingDetails bookingDetails) {
         BookingSummary bookingSummary = new BookingSummary();
         SessionDetails sessionDetails = sessionDetailsRepository.getOne(bookingDetails.getSessionId());
@@ -111,11 +130,7 @@ public class BookingService {
 
     private void copyClientOperationDetails(SessionDetails sessionDetails) {
         ClientOperation clientOperation = clientOperationRepository.findOne(sessionDetails.getOperationId());
-        sessionDetails.setFromTime(clientOperation.getFromTime());
-        sessionDetails.setToTime(clientOperation.getToTime());
-        sessionDetails.setNoOfTokens(clientOperation.getNoOfTokens());
-        sessionDetails.setAvailableToken(clientOperation.getNoOfTokens());
-        sessionDetails.setNextAvailableToken(START_TOKEN_NUMBER);
+        HelperUtil.copyClientOperationDetails(clientOperation, sessionDetails);
     }
 
     private void updateBookingDetailsInSession(SessionDetails sessionDetails) {
@@ -125,7 +140,7 @@ public class BookingService {
         else
             sessionDetails.setNextAvailableToken(sessionDetails.getNextAvailableToken() + 1);
 
-        if(sessionDetails.getStatus().equals(CREATED)){
+        if (sessionDetails.getStatus().equals(CREATED)) {
             sessionDetails.setStatus(ACTIVE);
         }
         sessionDetailsRepository.save(sessionDetails);

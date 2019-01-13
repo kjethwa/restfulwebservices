@@ -22,6 +22,7 @@ public class BookingDetails {
     private Long userId;
     private Integer tokenNumber;
     private String status;
+    private Integer sequenceNumber;
 
     @JsonIgnore
     private LocalDateTime createdDate;
@@ -93,5 +94,13 @@ public class BookingDetails {
 
     public void setCancelledDate(LocalDateTime cancelledDate) {
         this.cancelledDate = cancelledDate;
+    }
+
+    public Integer getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(Integer sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 }

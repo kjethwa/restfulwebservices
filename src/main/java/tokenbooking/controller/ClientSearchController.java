@@ -2,7 +2,6 @@ package tokenbooking.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tokenbooking.model.Client;
 import tokenbooking.model.ClientSearchDetails;
 import tokenbooking.service.ClientService;
 
