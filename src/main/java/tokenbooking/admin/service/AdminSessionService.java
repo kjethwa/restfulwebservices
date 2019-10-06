@@ -1,23 +1,26 @@
 package tokenbooking.admin.service;
 
 import Utils.HelperUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tokenbooking.admin.model.TokenInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tokenbooking.model.BookingDetails;
-import tokenbooking.model.ClientOperation;
-import tokenbooking.model.SessionDetails;
-import tokenbooking.model.UserDetails;
-import tokenbooking.repository.BookingRepository;
-import tokenbooking.repository.ClientOperationRepository;
-import tokenbooking.repository.SessionDetailsRepository;
-import tokenbooking.repository.UserDetailsRepository;
+import tokenbooking.model.*;
+import tokenbooking.repository.*;
 import tokenbooking.service.BookingService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static tokenbooking.model.Constants.*;
 
 @Service
 public class AdminSessionService {
+
+    Logger LOG = LoggerFactory.getLogger(AdminSessionService.class);
 
     @Autowired
     SessionDetailsRepository sessionDetailsRepository;
@@ -33,6 +36,9 @@ public class AdminSessionService {
 
     @Autowired
     BookingService bookingService;
+
+    @Autowired
+    ClientRepository clientRepository;
 
 
     public void startSession(Long sessionId) throws Exception {
@@ -73,6 +79,33 @@ public class AdminSessionService {
 
             return getTokenInfo(nextBooking);
         }
+    }
+
+    public List<AdminSessionSummary> getAllSessionDetails(Long clientId) {
+        LOG.debug("Getting all session details of clientId {}", clientId);
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
+        LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
+        return allAvailableSessions.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
+    }
+
+    private AdminSessionSummary getAdminSessionSummary(SessionDetails sessionDetails) {
+        AdminSessionSummary adminSessionSummary = new AdminSessionSummary();
+        adminSessionSummary.setAvailableTokens(sessionDetails.getAvailableToken());
+        adminSessionSummary.setBookedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BOOKED).intValue());
+        adminSessionSummary.setSubmittedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), SUBMITTED).intValue());
+        adminSessionSummary.setClientId(sessionDetails.getClientId());
+        adminSessionSummary.setSessionId(sessionDetails.getSessionId());
+        adminSessionSummary.setDate(sessionDetails.getDate());
+        adminSessionSummary.setFromTime(sessionDetails.getFromTime());
+        adminSessionSummary.setToTime(sessionDetails.getToTime());
+
+        Client client = clientRepository.findOne(sessionDetails.getClientId());
+        adminSessionSummary.setClientName(client.getClientName());
+
+        ClientOperation clientOperation = clientOperationRepository.findOne(sessionDetails.getOperationId());
+        adminSessionSummary.setDay(clientOperation.getDay());
+
+        return adminSessionSummary;
     }
 
     private TokenInfo getTokenInfo(BookingDetails nextBooking) {

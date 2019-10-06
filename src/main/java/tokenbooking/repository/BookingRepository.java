@@ -16,4 +16,6 @@ public interface BookingRepository extends JpaRepository<BookingDetails, Long> {
     BookingDetails findFirstBySessionIdAndSequenceNumberNotNullOrderBySequenceNumberDesc(Long sessionId);
 
     BookingDetails findFirstBySessionIdAndStatusOrderByTokenNumberAsc(Long sessionId, String status);
+
+    Long countBySessionIdAndStatus(Long sessionId,String status);
 }
