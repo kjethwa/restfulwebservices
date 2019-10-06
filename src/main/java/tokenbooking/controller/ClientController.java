@@ -3,35 +3,45 @@ package tokenbooking.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tokenbooking.model.Client;
+import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.service.ClientService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/clients")
 public class ClientController {
 
     @Autowired
     ClientService clientService;
 
-    @GetMapping
-    public List<Client> getAllClients(){
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "/clients", method = RequestMethod.GET)
+    public List<Client> getAllClients() {
         return clientService.getAllClients();
     }
 
-    @GetMapping("{clientId}")
-    public Client getClientById(@PathVariable Long clientId){
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.GET)
+    public Client getClientById(@PathVariable Long clientId) {
         return clientService.getClientById(clientId);
     }
 
-    @PostMapping
-    public void addClient(@RequestBody Client client){
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "/clients", method = RequestMethod.POST)
+    public void addClient(@RequestBody Client client) {
         clientService.addClient(client);
     }
 
-    @PutMapping
-    public void updateClient(@RequestBody Client client){
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "/clients", method = RequestMethod.PUT)
+    public void updateClient(@RequestBody Client client) {
         clientService.updateClient(client);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(value = "/clientname", method = RequestMethod.GET)
+    public List<ClientNameAndId> getListOfAllActiveClient() {
+        return clientService.getListOfAllActiveClients();
     }
 
 }

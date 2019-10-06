@@ -1,9 +1,14 @@
 package tokenbooking.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
+import tokenbooking.jsoncustomparser.LocalTimeSerializer;
+
+import javax.persistence.*;
+import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 @Entity
 public class ClientOperation {
@@ -11,10 +16,16 @@ public class ClientOperation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long operationId;
-    private String day;
-    private String noOfTokens;
-    private String fromTime;
-    private String toTime;
+    private DayOfWeek day;
+    private Integer noOfTokens;
+
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    private LocalTime fromTime;
+
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    private LocalTime toTime;
 
     public Long getOperationId() {
         return operationId;
@@ -24,35 +35,35 @@ public class ClientOperation {
         this.operationId = operationId;
     }
 
-    public String getDay() {
+    public DayOfWeek getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(DayOfWeek day) {
         this.day = day;
     }
 
-    public String getNoOfTokens() {
+    public Integer getNoOfTokens() {
         return noOfTokens;
     }
 
-    public void setNoOfTokens(String noOfTokens) {
+    public void setNoOfTokens(Integer noOfTokens) {
         this.noOfTokens = noOfTokens;
     }
 
-    public String getFromTime() {
+    public LocalTime getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(String fromTime) {
+    public void setFromTime(LocalTime fromTime) {
         this.fromTime = fromTime;
     }
 
-    public String getToTime() {
+    public LocalTime getToTime() {
         return toTime;
     }
 
-    public void setToTime(String toTime) {
+    public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
     }
 }
