@@ -41,7 +41,7 @@ public class AdminSessionService {
     ClientRepository clientRepository;
 
 
-    public void startSession(Long sessionId) throws Exception {
+    public TokenInfo startSession(Long sessionId) throws Exception {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
             throw new Exception("Invalid session");
@@ -57,6 +57,8 @@ public class AdminSessionService {
             sessionDetails.setStatus(INPROGRESS);
             sessionDetailsRepository.save(sessionDetails);
         }
+
+        return getNextToken(sessionId);
     }
 
     public TokenInfo getNextToken(Long sessionId) throws Exception {

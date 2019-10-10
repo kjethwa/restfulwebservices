@@ -1,5 +1,8 @@
 package tokenbooking.admin.controller;
 
+import org.springframework.transaction.annotation.Transactional;
+import tokenbooking.admin.model.ResponseMessage;
+import tokenbooking.admin.model.ResponseStatus;
 import tokenbooking.admin.model.TokenInfo;
 import tokenbooking.admin.service.AdminSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +19,37 @@ public class AdminSessionController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/startsession/{sessionId}", method = RequestMethod.GET)
-    public TokenInfo startSession(@PathVariable Long sessionId) throws Exception {
-        adminSessionService.startSession(sessionId);
-        return nextToken(sessionId);
+    @Transactional
+    public ResponseMessage startSession(@PathVariable Long sessionId) {
+        try {
+            TokenInfo tokenInfo = adminSessionService.startSession(sessionId);
+            return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
+        } catch (Exception e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/sessions/{clientId}", method = RequestMethod.GET)
-    public List<AdminSessionSummary> getAllSessionsOfClient(@PathVariable Long clientId) {
-        return adminSessionService.getAllSessionDetails(clientId);
+    @Transactional(rollbackFor=Exception.class)
+    public ResponseMessage getAllSessionsOfClient(@PathVariable Long clientId) {
+        try {
+            List<AdminSessionSummary> adminSessionSummaries = adminSessionService.getAllSessionDetails(clientId);
+            return new ResponseMessage(adminSessionSummaries, ResponseStatus.SUCCESS);
+        } catch (Exception e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/nexttoken/{sessionId}", method = RequestMethod.GET)
-    public TokenInfo nextToken(@PathVariable Long sessionId) throws Exception {
-        return adminSessionService.getNextToken(sessionId);
+    @Transactional
+    public ResponseMessage nextToken(@PathVariable Long sessionId) {
+        try {
+            TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
+            return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
+        } catch (Exception e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
     }
 }
