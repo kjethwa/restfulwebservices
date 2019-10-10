@@ -3,6 +3,8 @@ package tokenbooking.admin.service;
 import Utils.HelperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+import tokenbooking.admin.exception.AdminException;
 import tokenbooking.admin.model.TokenInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,11 @@ public class AdminSessionService {
     @Autowired
     ClientRepository clientRepository;
 
-
-    public TokenInfo startSession(Long sessionId) throws Exception {
+    @Transactional()
+    public TokenInfo startSession(Long sessionId) throws AdminException {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
-            throw new Exception("Invalid session");
+            throw new AdminException("Invalid session");
         }
 
         if (CREATED.equals(sessionDetails.getStatus())) {
@@ -52,7 +54,7 @@ public class AdminSessionService {
         }
 
         if (!CREATED.equals(sessionDetails.getStatus()) && !ACTIVE.equals(sessionDetails.getStatus())) {
-            throw new Exception("Invalid session status");
+            throw new AdminException("Invalid session status");
         } else {
             sessionDetails.setStatus(INPROGRESS);
             sessionDetailsRepository.save(sessionDetails);
@@ -61,20 +63,21 @@ public class AdminSessionService {
         return getNextToken(sessionId);
     }
 
-    public TokenInfo getNextToken(Long sessionId) throws Exception {
+    @Transactional()
+    public TokenInfo getNextToken(Long sessionId) throws AdminException {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
-            throw new Exception("Invalid session");
+            throw new AdminException("Invalid session");
         }
 
         if (!INPROGRESS.equals(sessionDetails.getStatus())) {
-            throw new Exception("Invalid session status");
+            throw new AdminException("Invalid session status");
         } else {
             BookingDetails previousBookingDetails = completePreviousToken(sessionId);
             BookingDetails nextBooking = bookingService.getSubmittedBookingOfLeastTokenNumber(sessionId);
 
             if (nextBooking == null) {
-                throw new Exception("All bookings completed");
+                throw new AdminException("All bookings completed");
             }
 
             setSequenceNumber(previousBookingDetails, nextBooking);
@@ -83,6 +86,7 @@ public class AdminSessionService {
         }
     }
 
+    @Transactional()
     public List<AdminSessionSummary> getAllSessionDetails(Long clientId) {
         LOG.debug("Getting all session details of clientId {}", clientId);
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));

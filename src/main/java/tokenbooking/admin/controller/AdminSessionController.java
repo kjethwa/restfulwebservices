@@ -1,6 +1,6 @@
 package tokenbooking.admin.controller;
 
-import org.springframework.transaction.annotation.Transactional;
+import tokenbooking.admin.exception.AdminException;
 import tokenbooking.admin.model.ResponseMessage;
 import tokenbooking.admin.model.ResponseStatus;
 import tokenbooking.admin.model.TokenInfo;
@@ -19,36 +19,33 @@ public class AdminSessionController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/startsession/{sessionId}", method = RequestMethod.GET)
-    @Transactional
     public ResponseMessage startSession(@PathVariable Long sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.startSession(sessionId);
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
-        } catch (Exception e) {
+        } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/sessions/{clientId}", method = RequestMethod.GET)
-    @Transactional(rollbackFor=Exception.class)
     public ResponseMessage getAllSessionsOfClient(@PathVariable Long clientId) {
         try {
             List<AdminSessionSummary> adminSessionSummaries = adminSessionService.getAllSessionDetails(clientId);
             return new ResponseMessage(adminSessionSummaries, ResponseStatus.SUCCESS);
-        } catch (Exception e) {
+        } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/nexttoken/{sessionId}", method = RequestMethod.GET)
-    @Transactional
     public ResponseMessage nextToken(@PathVariable Long sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
-        } catch (Exception e) {
+        } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }
     }
