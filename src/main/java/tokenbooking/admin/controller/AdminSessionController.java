@@ -12,23 +12,22 @@ import tokenbooking.model.AdminSessionSummary;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class AdminSessionController {
 
     @Autowired
     AdminSessionService adminSessionService;
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/startsession/{sessionId}", method = RequestMethod.GET)
     public ResponseMessage startSession(@PathVariable Long sessionId) {
         try {
-            TokenInfo tokenInfo = adminSessionService.startSession(sessionId);
-            return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
+            adminSessionService.startSession(sessionId);
+            return new ResponseMessage("Session started successfully", ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/sessions/{clientId}", method = RequestMethod.GET)
     public ResponseMessage getAllSessionsOfClient(@PathVariable Long clientId) {
         try {
@@ -39,11 +38,13 @@ public class AdminSessionController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/admin/nexttoken/{sessionId}", method = RequestMethod.GET)
     public ResponseMessage nextToken(@PathVariable Long sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
+            if (tokenInfo == null) {
+                return new ResponseMessage("No more submitted token!", ResponseStatus.FAILURE);
+            }
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);

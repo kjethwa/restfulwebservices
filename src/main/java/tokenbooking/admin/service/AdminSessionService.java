@@ -43,46 +43,44 @@ public class AdminSessionService {
     ClientRepository clientRepository;
 
     @Transactional()
-    public TokenInfo startSession(Long sessionId) throws AdminException {
+    public void startSession(Long sessionId) throws AdminException {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
-            throw new AdminException("Invalid session");
+            throw new AdminException("Session not found " + sessionId);
         }
 
         if (CREATED.equals(sessionDetails.getStatus())) {
             copyClientOperationDetails(sessionDetails);
         }
 
-        if (!CREATED.equals(sessionDetails.getStatus()) && !ACTIVE.equals(sessionDetails.getStatus())) {
-            throw new AdminException("Invalid session status");
+        if (INPROGRESS.equalsIgnoreCase(sessionDetails.getStatus())) {
+            throw new AdminException("Session already started");
         } else {
             sessionDetails.setStatus(INPROGRESS);
             sessionDetailsRepository.save(sessionDetails);
         }
-
-        return getNextToken(sessionId);
     }
 
     @Transactional()
     public TokenInfo getNextToken(Long sessionId) throws AdminException {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
-            throw new AdminException("Invalid session");
+            throw new AdminException("Session not found " + sessionId);
         }
 
         if (!INPROGRESS.equals(sessionDetails.getStatus())) {
-            throw new AdminException("Invalid session status");
+            throw new AdminException("Session not started " + sessionId);
         } else {
             BookingDetails previousBookingDetails = completePreviousToken(sessionId);
             BookingDetails nextBooking = bookingService.getSubmittedBookingOfLeastTokenNumber(sessionId);
 
-            if (nextBooking == null) {
-                throw new AdminException("All bookings completed");
+            if (nextBooking != null) {
+                setSequenceNumber(previousBookingDetails, nextBooking);
+
+                return getTokenInfo(nextBooking);
+            } else {
+                return null;
             }
-
-            setSequenceNumber(previousBookingDetails, nextBooking);
-
-            return getTokenInfo(nextBooking);
         }
     }
 
@@ -137,7 +135,7 @@ public class AdminSessionService {
     private BookingDetails completePreviousToken(Long sessionId) {
         BookingDetails bookingDetails = bookingService.getBookingOfLastSequenceNumber(sessionId);
 
-        if (bookingDetails != null) {
+        if (bookingDetails != null && !COMPLETED.equalsIgnoreCase(bookingDetails.getStatus())) {
             bookingDetails.setStatus(COMPLETED);
             bookingRepository.save(bookingDetails);
         }
