@@ -87,7 +87,7 @@ public class AdminSessionService {
     @Transactional()
     public List<AdminSessionSummary> getAllSessionDetails(Long clientId) {
         LOG.debug("Getting all session details of clientId {}", clientId);
-        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
         LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
         return allAvailableSessions.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
     }
@@ -97,6 +97,7 @@ public class AdminSessionService {
         adminSessionSummary.setAvailableTokens(sessionDetails.getAvailableToken());
         adminSessionSummary.setBookedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BOOKED).intValue());
         adminSessionSummary.setSubmittedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), SUBMITTED).intValue());
+        adminSessionSummary.setCompletedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), COMPLETED).intValue());
         adminSessionSummary.setClientId(sessionDetails.getClientId());
         adminSessionSummary.setSessionId(sessionDetails.getSessionId());
         adminSessionSummary.setDate(sessionDetails.getDate());
