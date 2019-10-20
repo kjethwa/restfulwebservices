@@ -12,4 +12,6 @@ public interface SessionDetailsRepository extends JpaRepository<SessionDetails, 
 
     Collection<SessionDetails> findByClientIdAndDateBetweenAndStatusIn(Long clientId, LocalDate startDate, LocalDate endDate, List<String> status);
 
+    Collection<SessionDetails> findByClientIdAndStatusIn(Long clientId, List<String> status);
+
 }

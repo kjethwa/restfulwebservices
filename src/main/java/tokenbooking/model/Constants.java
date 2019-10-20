@@ -10,6 +10,7 @@ public class Constants {
     public static String INPROGRESS = "INPROGRESS";
     public static String COMPLETED = "COMPLETED";
     public static String CANCELLED = "CANCELLED";
+    public static String CANCELLED_BY_ADMIN = "CANCELLEDBYADMIN";
     public static String BOOKED = "BOOKED";
     public static String SUBMITTED = "SUBMITTED";
     public static String EXPIRED = "EXPIRED";

@@ -18,7 +18,7 @@ public class AdminSessionController {
     @Autowired
     AdminSessionService adminSessionService;
 
-    @RequestMapping(value = "/admin/startsession/{sessionId}", method = RequestMethod.GET)
+    @GetMapping(value = "/admin/startsession/{sessionId}")
     public ResponseMessage startSession(@PathVariable Long sessionId) {
         try {
             adminSessionService.startSession(sessionId);
@@ -28,7 +28,7 @@ public class AdminSessionController {
         }
     }
 
-    @RequestMapping(value = "/admin/sessions/{clientId}", method = RequestMethod.GET)
+    @GetMapping(value = "/admin/sessions/{clientId}")
     public ResponseMessage getAllSessionsOfClient(@PathVariable Long clientId) {
         try {
             List<AdminSessionSummary> adminSessionSummaries = adminSessionService.getAllSessionDetails(clientId);
@@ -38,7 +38,7 @@ public class AdminSessionController {
         }
     }
 
-    @RequestMapping(value = "/admin/nexttoken/{sessionId}", method = RequestMethod.GET)
+    @GetMapping(value = "/admin/nexttoken/{sessionId}")
     public ResponseMessage nextToken(@PathVariable Long sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
@@ -46,6 +46,26 @@ public class AdminSessionController {
                 return new ResponseMessage("No more submitted token!", ResponseStatus.FAILURE);
             }
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
+        } catch (AdminException e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
+    }
+
+    @GetMapping(value = "/admin/completesession/{sessionId}")
+    public ResponseMessage completeSession(@PathVariable Long sessionId) {
+        try {
+            adminSessionService.completeSession(sessionId);
+            return new ResponseMessage("Session completed successfully.", ResponseStatus.SUCCESS);
+        } catch (AdminException e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
+    }
+
+    @GetMapping(value = "/admin/activesession/{clientId}")
+    public ResponseMessage getActiveSession(@PathVariable Long clientId) {
+        try {
+            AdminSessionSummary adminSessionSummary = adminSessionService.getActiveSession(clientId);
+            return new ResponseMessage(adminSessionSummary, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }

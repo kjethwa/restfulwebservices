@@ -49,6 +49,11 @@ public class AdminSessionService {
             throw new AdminException("Session not found " + sessionId);
         }
 
+        if (isClientHasOtherSessionInProgress(sessionDetails)) {
+            LOG.info("Can not start session other session is already in progress with session id {}", sessionId);
+            throw new AdminException("Can not start session other session is already in progress.");
+        }
+
         if (CREATED.equals(sessionDetails.getStatus())) {
             copyClientOperationDetails(sessionDetails);
         }
@@ -90,6 +95,47 @@ public class AdminSessionService {
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
         LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
         return allAvailableSessions.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
+    }
+
+    @Transactional()
+    public void completeSession(Long sessionId) {
+        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+
+        if (COMPLETED.equals(sessionDetails.getStatus())) {
+            throw new AdminException("Session already Completed");
+        }
+
+        if (ACTIVE.equals(sessionDetails.getStatus()) || INPROGRESS.equals(sessionDetails.getStatus())) {
+            bookingRepository.updateBookingStatusOfSessionId(CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BOOKED, SUBMITTED));
+        }
+
+        setCompletionValueAndCompleteSession(sessionDetails);
+    }
+
+    @Transactional()
+    public AdminSessionSummary getActiveSession(Long clientId) {
+        List<SessionDetails> sessionDetails = (List<SessionDetails>) sessionDetailsRepository.findByClientIdAndStatusIn(clientId, Arrays.asList(INPROGRESS));
+
+        if (sessionDetails.isEmpty()) {
+            throw new AdminException("No Active session found");
+        } else if (sessionDetails.size() > 1) {
+            throw new AdminException("Multiple active session found");
+        } else {
+            return getAdminSessionSummary(sessionDetails.iterator().next());
+        }
+    }
+
+    private void setCompletionValueAndCompleteSession(SessionDetails sessionDetails) {
+        sessionDetails.setStatus(COMPLETED);
+        sessionDetails.setNextAvailableToken(ZERO);
+        sessionDetails.setAvailableToken(ZERO);
+        sessionDetailsRepository.save(sessionDetails);
+    }
+
+    private boolean isClientHasOtherSessionInProgress(SessionDetails sessionDetails) {
+        List<SessionDetails> result = new ArrayList<>(sessionDetailsRepository.findByClientIdAndStatusIn(sessionDetails.getClientId(), Arrays.asList(INPROGRESS)));
+
+        return !result.isEmpty();
     }
 
     private AdminSessionSummary getAdminSessionSummary(SessionDetails sessionDetails) {
