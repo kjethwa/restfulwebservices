@@ -47,19 +47,15 @@ public class AdminSessionService {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
-        }
-
-        if (isClientHasOtherSessionInProgress(sessionDetails)) {
+        } else if (INPROGRESS.equalsIgnoreCase(sessionDetails.getStatus())) {
+            throw new AdminException("Session already started");
+        } else if (isClientHasOtherSessionInProgress(sessionDetails)) {
             LOG.info("Can not start session other session is already in progress with session id {}", sessionId);
             throw new AdminException("Can not start session other session is already in progress.");
         }
 
         if (CREATED.equals(sessionDetails.getStatus())) {
             copyClientOperationDetails(sessionDetails);
-        }
-
-        if (INPROGRESS.equalsIgnoreCase(sessionDetails.getStatus())) {
-            throw new AdminException("Session already started");
         } else {
             sessionDetails.setStatus(INPROGRESS);
             sessionDetailsRepository.save(sessionDetails);
@@ -78,14 +74,18 @@ public class AdminSessionService {
         } else {
             BookingDetails previousBookingDetails = completePreviousToken(sessionId);
             BookingDetails nextBooking = bookingService.getSubmittedBookingOfLeastTokenNumber(sessionId);
+            TokenInfo tokenInfo = null;
 
             if (nextBooking != null) {
                 setSequenceNumber(previousBookingDetails, nextBooking);
-
-                return getTokenInfo(nextBooking);
+                tokenInfo = getTokenInfo(nextBooking);
+                tokenInfo.setHasMoreTokens(true);
             } else {
-                return null;
+                tokenInfo = getTokenInfo(previousBookingDetails);
+                tokenInfo.setHasMoreTokens(false);
             }
+
+            return tokenInfo;
         }
     }
 
@@ -123,6 +123,22 @@ public class AdminSessionService {
         } else {
             return getAdminSessionSummary(sessionDetails.iterator().next());
         }
+    }
+
+    public TokenInfo getLastToken(Long sessionId) {
+        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        if (!INPROGRESS.equals(sessionDetails.getStatus())) {
+            throw new AdminException("Session not yet started.");
+        }
+
+        BookingDetails bookingDetails = bookingService.getBookingOfLastSequenceNumber(sessionId);
+
+        TokenInfo tokenInfo = bookingDetails == null ? null : getTokenInfo(bookingDetails);
+
+        if (tokenInfo != null) {
+            tokenInfo.setHasMoreTokens(true);
+        }
+        return tokenInfo;
     }
 
     private void setCompletionValueAndCompleteSession(SessionDetails sessionDetails) {

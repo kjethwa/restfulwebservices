@@ -42,9 +42,16 @@ public class AdminSessionController {
     public ResponseMessage nextToken(@PathVariable Long sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
-            if (tokenInfo == null) {
-                return new ResponseMessage("No more submitted token!", ResponseStatus.FAILURE);
-            }
+            return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
+        } catch (AdminException e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
+    }
+
+    @GetMapping(value = "/admin/lasttoken/{sessionId}")
+    public ResponseMessage lastToken(@PathVariable Long sessionId) {
+        try {
+            TokenInfo tokenInfo = adminSessionService.getLastToken(sessionId);
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
