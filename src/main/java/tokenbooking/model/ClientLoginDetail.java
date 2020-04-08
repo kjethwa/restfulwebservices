@@ -1,5 +1,7 @@
 package tokenbooking.model;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -66,4 +68,5 @@ public class ClientLoginDetail {
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+
 }

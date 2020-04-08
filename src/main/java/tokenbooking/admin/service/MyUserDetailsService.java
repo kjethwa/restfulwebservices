@@ -8,22 +8,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import tokenbooking.repository.UserDetailsRepository;
+import tokenbooking.model.ClientLoginDetail;
+import tokenbooking.repository.ClientLoginDetailRepository;
 
-import java.util.Collections;
-
-import static tokenbooking.model.Constants.ACTIVE;
+import java.util.stream.Collectors;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    UserDetailsRepository userDetailsRepository;
+    ClientLoginDetailRepository clientLoginDetailRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        tokenbooking.model.UserDetails dbUser = userDetailsRepository.findUserDetailsByPhoneNumberAndStatus("9988776655", ACTIVE);
-        UserDetails userDetails = new User(dbUser.getPhoneNumber(), "pass", Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        ClientLoginDetail clientLoginDetail = clientLoginDetailRepository.findByUserName(userName);
+        UserDetails userDetails = new User(clientLoginDetail.getUserName(), clientLoginDetail.getPassword(), clientLoginDetail.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         return userDetails;
     }
 

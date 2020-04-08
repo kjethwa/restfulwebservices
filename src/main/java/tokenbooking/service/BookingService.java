@@ -1,6 +1,5 @@
 package tokenbooking.service;
 
-import Utils.HelperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -9,8 +8,8 @@ import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.ClientOperationRepository;
 import tokenbooking.repository.ClientRepository;
 import tokenbooking.repository.SessionDetailsRepository;
+import tokenbooking.utils.*;
 
-import javax.validation.constraints.Max;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

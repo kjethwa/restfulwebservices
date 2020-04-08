@@ -1,4 +1,4 @@
-package Utils;
+package tokenbooking.utils;
 
 import tokenbooking.model.ClientOperation;
 import tokenbooking.model.SessionDetails;

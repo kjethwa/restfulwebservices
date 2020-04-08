@@ -1,15 +1,14 @@
 package tokenbooking.service;
 
-import Utils.HelperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.SessionDetailsRepository;
+import tokenbooking.utils.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
