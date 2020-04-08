@@ -12,7 +12,7 @@ import tokenbooking.model.AdminSessionSummary;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin("http://localhost:4201")
 public class AdminSessionController {
 
     @Autowired
