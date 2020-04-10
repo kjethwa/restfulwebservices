@@ -24,10 +24,10 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-             http.csrf().disable().authorizeRequests()
+             http.cors().and().csrf().disable().authorizeRequests()
                  .antMatchers("/admin/**").hasRole("ADMIN")
-                 .antMatchers("/authenticate")
-                 .permitAll();
+                 .antMatchers("/authenticate").permitAll()
+                 ;
     }
 
     @Bean
