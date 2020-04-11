@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import tokenbooking.model.UserDetails;
 
 public interface UserDetailsRepository extends JpaRepository<UserDetails,Long> {
+
+    public UserDetails findUserDetailsByPhoneNumberAndStatus(String phoneNumber, String status);
 }

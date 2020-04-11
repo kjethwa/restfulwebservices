@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.SessionDetailsRepository;
+import tokenbooking.utils.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +32,7 @@ public class SessionService {
     public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId,Long userId) throws Exception {
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
-        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, getCurrentDate(), getEndDate(), Arrays.asList(CREATED,ACTIVE, INPROGRESS)));
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
 
         checkAllSessionIsPresentOrCreate(allAvailableSessions,clientId);
 
@@ -85,7 +85,7 @@ public class SessionService {
         }
 
         //check the session if not present for the day create one
-        LocalDate nextDate = getCurrentDate();
+        LocalDate nextDate = HelperUtil.getCurrentDate();
         for (int i = 0; i <= MAX_DAYS_OF_SESSION; i++) {
             if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null) {
                 Set<Long> presentOperationIds = new HashSet<>();
@@ -155,10 +155,10 @@ public class SessionService {
         if(!clientService.getClientById(sessionDetails.getClientId()).getDaysOfOperation().stream().anyMatch(s -> s.getOperationId().equals(sessionDetails.getOperationId()))){
             return false;
         }
-        if(sessionDetails.getDate().isAfter(getCurrentDate())){
+        if(sessionDetails.getDate().isAfter(HelperUtil.getCurrentDate())){
             return true;
         }
-        if(sessionDetails.getDate().isEqual(getCurrentDate()) && sessionDetails.getToTime().isAfter(getCurrentTime())){
+        if(sessionDetails.getDate().isEqual(HelperUtil.getCurrentDate()) && sessionDetails.getToTime().isAfter(HelperUtil.getCurrentTime())){
             return true;
         }
         return false;
@@ -175,20 +175,6 @@ public class SessionService {
 
             allAvailableSessions.add(sessionDetailsRepository.save(sessionDetails));
         }
-    }
-
-    private LocalDate getEndDate() {
-        LocalDate today = getCurrentDate();     //Today
-        LocalDate weekEndDate = today.plusDays(MAX_DAYS_OF_SESSION);
-        return weekEndDate;
-    }
-
-    private LocalDate getCurrentDate() {
-        return LocalDate.now();
-    }
-
-    private LocalTime getCurrentTime(){
-        return LocalTime.now();
     }
 
 }
