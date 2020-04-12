@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import tokenbooking.admin.model.AuthenticationRequest;
 import tokenbooking.admin.model.AuthenticationResponse;
-import tokenbooking.admin.service.AdminSessionService;
 import tokenbooking.admin.service.MyUserDetailsService;
 import tokenbooking.admin.util.JwtUtil;
 
@@ -36,11 +35,11 @@ public class AuthenticateController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            LOG.info("User with userId {} login failed", authenticationRequest.getUsername());
+            LOG.debug("User with userId {} login failed", authenticationRequest.getUsername());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null, "Invalid username and password"));
         }
 
-        LOG.info("User with userId {} login successful", authenticationRequest.getUsername());
+        LOG.debug("User with userId {} login successful", authenticationRequest.getUsername());
 
         String jwt = jwtUtil.generateToken(myUserDetailsService.loadUserByUsername(authenticationRequest.getUsername()));
 

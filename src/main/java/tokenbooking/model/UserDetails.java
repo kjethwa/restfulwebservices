@@ -17,7 +17,6 @@ public class UserDetails {
     private String phoneNumber;
     private String password;
     private String gender;
-    private String role;
     private String status;
 
     public Long getUserId() {
@@ -74,14 +73,6 @@ public class UserDetails {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getStatus() {

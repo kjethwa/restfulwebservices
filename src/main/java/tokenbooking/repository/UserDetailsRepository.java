@@ -5,5 +5,5 @@ import tokenbooking.model.UserDetails;
 
 public interface UserDetailsRepository extends JpaRepository<UserDetails,Long> {
 
-    public UserDetails findUserDetailsByPhoneNumberAndStatus(String phoneNumber, String status);
+    UserDetails findByLoginId(String loginId);
 }
