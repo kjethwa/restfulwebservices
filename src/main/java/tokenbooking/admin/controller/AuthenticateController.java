@@ -8,9 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import tokenbooking.admin.model.AuthenticationRequest;
 import tokenbooking.admin.model.AuthenticationResponse;
 import tokenbooking.admin.service.MyUserDetailsService;
@@ -46,4 +45,9 @@ public class AuthenticateController {
         return ResponseEntity.ok().body(new AuthenticationResponse(jwt));
     }
 
+    @PostMapping("/encode")
+    public String encode(@RequestParam String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
 }
