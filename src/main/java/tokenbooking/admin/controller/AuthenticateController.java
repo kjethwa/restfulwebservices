@@ -15,6 +15,10 @@ import tokenbooking.admin.model.AuthenticationResponse;
 import tokenbooking.admin.service.MyUserDetailsService;
 import tokenbooking.admin.util.JwtUtil;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 public class AuthenticateController {
 
@@ -29,8 +33,9 @@ public class AuthenticateController {
     @Autowired
     MyUserDetailsService myUserDetailsService;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(HttpServletRequest request, HttpServletResponse response, @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
@@ -41,6 +46,13 @@ public class AuthenticateController {
         LOG.debug("User with userId {} login successful", authenticationRequest.getUsername());
 
         String jwt = jwtUtil.generateToken(myUserDetailsService.loadUserByUsername(authenticationRequest.getUsername()));
+
+        Cookie tokenCookie = new Cookie("token",jwt);
+        //tokenCookie.setSecure(true);
+        tokenCookie.setHttpOnly(true);
+        //tokenCookie.setDomain("http://localhost");
+        //tokenCookie.setPath("/");
+        response.addCookie(tokenCookie);
 
         return ResponseEntity.ok().body(new AuthenticationResponse(jwt));
     }

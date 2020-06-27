@@ -32,18 +32,32 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
+               // .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                //.antMatchers("/static/**").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/*.js").permitAll()
+                .antMatchers("/*.map").permitAll()
+                .antMatchers("/*.ico").permitAll()
+                .antMatchers("/*.png").permitAll()
+                .antMatchers("/auth/*").permitAll()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-
        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
+/*
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/resources/static/**"); // #3
+    }*/
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
+

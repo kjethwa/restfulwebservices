@@ -14,9 +14,12 @@ import tokenbooking.admin.util.JwtUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -32,13 +35,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
-
         String username = null;
         String jwt = null;
+        Cookie[] list = request.getCookies();
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
+        Optional<String> jwtOptional = Arrays.stream(list).filter(cookie -> cookie.getName().equals("token")).map(Cookie::getValue).findFirst();
+        jwt = jwtOptional.get();
+        if (jwt != null) {
             username = jwtUtil.extractUsername(jwt);
         }
 
