@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
+import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.repository.SessionDetailsRepository;
 import tokenbooking.utils.*;
 
@@ -43,6 +44,19 @@ public class SessionService {
         return clientAndSessionDetails;
     }
 
+    public List<ClientAndSessionDetails> getAllSessionDetailsOfAllActiveClients(Long userId) {
+        List<ClientAndSessionDetails> clientAndSessionDetails = new ArrayList<>();
+        List<ClientNameAndId> clientNameAndIds = clientService.getListOfAllActiveClients();
+        clientNameAndIds.stream().forEach(clientNameAndId -> {
+            try {
+                clientAndSessionDetails.add(this.getSessionDetailsOfClientWithClientNameAndAddressSummary(clientNameAndId.getClientId(), userId));
+            } catch (Exception e) {
+                // TODO add logger and handle exception
+            }
+        });
+        return clientAndSessionDetails;
+    }
+
     public SessionDetails save(SessionDetails sessionDetails) {
         return sessionDetailsRepository.save(sessionDetails);
     }
@@ -51,7 +65,7 @@ public class SessionService {
         return sessionDetailsRepository.findOne(sessionId);
     }
 
-    public Integer getNextAvailableToken(Long sessionId) throws Exception {
+    public synchronized Integer getNextAvailableToken(Long sessionId) throws Exception {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if(sessionDetails.getStatus().equals(CREATED)){
             return START_TOKEN_NUMBER;
@@ -171,7 +185,7 @@ public class SessionService {
             sessionDetails.setDate(nextDate);
             sessionDetails.setOperationId(clientOperation.getOperationId());
             sessionDetails.setStatus(CREATED);
-            sessionDetails.setNextAvailableToken(ZERO);
+            sessionDetails.setNextAvailableToken(START_TOKEN_NUMBER);
 
             allAvailableSessions.add(sessionDetailsRepository.save(sessionDetails));
         }

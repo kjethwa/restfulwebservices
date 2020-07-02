@@ -7,9 +7,11 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 
 public class LocalTimeSerializer extends StdSerializer<LocalTime> {
+
     public LocalTimeSerializer() {
         super(LocalTime.class);
     }
@@ -17,7 +19,12 @@ public class LocalTimeSerializer extends StdSerializer<LocalTime> {
     @Override
     public void serialize(LocalTime value, JsonGenerator generator, SerializerProvider provider) throws IOException {
         if(!StringUtils.isEmpty(value)){
-            String temp = value.toString();
+            String temp;
+            if(value.isBefore(LocalTime.NOON)){
+                temp = value.toString() + " AM";
+            } else {
+                temp = value.toString() + " PM";
+            }
             generator.writeString(temp);
         }
     }

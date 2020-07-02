@@ -39,8 +39,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
         Cookie[] list = request.getCookies();
 
-        Optional<String> jwtOptional = Arrays.stream(list).filter(cookie -> cookie.getName().equals("token")).map(Cookie::getValue).findFirst();
-        jwt = jwtOptional.get();
+        if (list != null) {
+            Optional<String> jwtOptional = Arrays.stream(list).filter(cookie -> cookie.getName().equals("token")).map(Cookie::getValue).findFirst();
+            jwt = jwtOptional.get();
+        }
         if (jwt != null) {
             username = jwtUtil.extractUsername(jwt);
         }

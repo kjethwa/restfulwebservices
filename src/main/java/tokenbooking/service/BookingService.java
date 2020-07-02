@@ -12,6 +12,8 @@ import tokenbooking.utils.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static tokenbooking.model.Constants.*;
@@ -35,10 +37,12 @@ public class BookingService {
 
         if (!StringUtils.isEmpty(bookingDetails)) {
 
-            if (StringUtils.isEmpty(bookingDetails.getSessionId()) || StringUtils.isEmpty(bookingDetails.getUserId()) || StringUtils.isEmpty((bookingDetails.getTokenNumber()))) {
+            if (StringUtils.isEmpty(bookingDetails.getSessionId()) || StringUtils.isEmpty(bookingDetails.getUserId())) {
                 throw new Exception("Invalid booking reguest");
             }
+
             SessionDetails sessionDetails = sessionDetailsRepository.findOne(bookingDetails.getSessionId());
+            bookingDetails.setTokenNumber(sessionDetails.getNextAvailableToken());
 
             //Check if the token is already booked
             validateBooking(bookingDetails, sessionDetails);
@@ -109,6 +113,9 @@ public class BookingService {
 
     private void validateBooking(BookingDetails bookingDetails, SessionDetails sessionDetails) throws Exception {
         if (!CREATED.equals(sessionDetails.getStatus())) {
+            if(checkIsAlreadyBookedInSession(bookingDetails,sessionDetails)) {
+                throw new Exception("Already booked a token in the session");
+            }
             if (!sessionDetails.getNextAvailableToken().equals(bookingDetails.getTokenNumber())) {
                 throw new Exception("Token is already booked. Kindly book another token.");
             }
@@ -119,6 +126,11 @@ public class BookingService {
                 throw new Exception("Booking is full for the current session.");
             }
         }
+    }
+
+    private boolean checkIsAlreadyBookedInSession(BookingDetails bookingDetails, SessionDetails sessionDetails) {
+        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), bookingDetails.getUserId(), Arrays.asList(BOOKED, SUBMITTED));
+        return bookingDetailList.size() > 0;
     }
 
     private void saveTokenDetails(BookingDetails bookingDetails) {

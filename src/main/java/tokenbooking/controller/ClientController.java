@@ -8,7 +8,7 @@ import tokenbooking.service.ClientService;
 
 import java.util.List;
 
-@RestController
+@RestController("/mdmapi")
 public class ClientController {
 
     @Autowired

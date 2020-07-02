@@ -15,8 +15,8 @@ public class BookingController {
     @Autowired
     BookingService bookingService;
 
-    @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "booktoken", method = RequestMethod.POST)
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/booktoken", method = RequestMethod.POST)
     public BookingDetails bookToken(@RequestBody BookingDetails bookingDetails) {
         try {
             return bookingService.bookToken(bookingDetails);
@@ -26,20 +26,20 @@ public class BookingController {
         return bookingDetails;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "users/{userId}/bookings", method = RequestMethod.GET)
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/users/{userId}/bookings", method = RequestMethod.GET)
     public List<BookingSummary> getAllBookingsOfUser(@PathVariable Long userId) {
         return bookingService.getAllBookingOfUser(userId);
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "cancelBooking/{bookingId}", method = RequestMethod.PUT)
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/cancelBooking/{bookingId}", method = RequestMethod.PUT)
     public BookingSummary cancelBooking(@PathVariable Long bookingId) {
         return bookingService.cancelBooking(bookingId);
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "submitBooking/{bookingId}", method = RequestMethod.PUT)
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/submitBooking/{bookingId}", method = RequestMethod.PUT)
     public BookingSummary submitBooking(@PathVariable Long bookingId) {
         return bookingService.submitBooking(bookingId);
     }

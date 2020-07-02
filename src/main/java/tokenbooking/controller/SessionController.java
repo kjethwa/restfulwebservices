@@ -5,16 +5,29 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import tokenbooking.model.ClientAndSessionDetails;
 import tokenbooking.model.SessionDetails;
+import tokenbooking.repository.ClientNameAndId;
+import tokenbooking.service.ClientService;
 import tokenbooking.service.SessionService;
 
-@RestController
+import java.util.List;
+
+@RestController()
 public class SessionController {
 
     @Autowired
     SessionService sessionService;
 
-    @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "/clients/{clientId}/sessions", method = RequestMethod.GET)
+    @Autowired
+    ClientService clientService;
+
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/clientname", method = RequestMethod.GET)
+    public List<ClientNameAndId> getListOfAllActiveClient() {
+        return clientService.getListOfAllActiveClients();
+    }
+
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/clients/{clientId}/sessions", method = RequestMethod.GET)
     public ClientAndSessionDetails getAllActiveSessionsOfClient(@PathVariable Long clientId, @RequestParam Long userId) {
         try {
             if (StringUtils.isEmpty(userId)) {
@@ -27,8 +40,22 @@ public class SessionController {
         return null;
     }
 
+    @CrossOrigin(origins = "http://localhost:4201")
+    @RequestMapping(value = "/enduserapi/clients/sessions", method = RequestMethod.GET)
+    public List<ClientAndSessionDetails> getAllActiveSessionsOfAllClients(@RequestParam Long userId) {
+        try {
+            if (StringUtils.isEmpty(userId)) {
+                throw new Exception("Invalid request");
+            }
+            return sessionService.getAllSessionDetailsOfAllActiveClients(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(value = "/sessions/{sessionId}/nextAvailableToken", method = RequestMethod.GET)
+    @RequestMapping(value = "/enduserapi/sessions/{sessionId}/nextAvailableToken", method = RequestMethod.GET)
     public Integer getNextAvailableToken(@PathVariable Long sessionId) {
         try {
             return sessionService.getNextAvailableToken(sessionId);

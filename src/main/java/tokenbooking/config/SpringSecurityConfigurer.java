@@ -31,9 +31,7 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-               // .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                //.antMatchers("/static/**").permitAll()
+        http.cors().and().csrf().disable();/*.authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/*.js").permitAll()
                 .antMatchers("/*.map").permitAll()
@@ -46,7 +44,7 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-       http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+       http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
     }
 /*
     @Override
