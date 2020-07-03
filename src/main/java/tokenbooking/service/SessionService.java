@@ -2,6 +2,7 @@ package tokenbooking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tokenbooking.comparator.UserSessionSummaryComparator;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.ClientNameAndId;
@@ -38,6 +39,7 @@ public class SessionService {
         checkAllSessionIsPresentOrCreate(allAvailableSessions,clientId);
 
         List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions,userId);
+        userSessionSummaries.sort(new UserSessionSummaryComparator());
 
         clientAndSessionDetails.setSessions(userSessionSummaries);
 

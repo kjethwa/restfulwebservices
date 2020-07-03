@@ -3,6 +3,7 @@ package tokenbooking.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import tokenbooking.comparator.BookingSummaryComparator;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.ClientOperationRepository;
@@ -65,6 +66,7 @@ public class BookingService {
 
         allBookings.forEach(b -> bookingSummaryList.add(this.getBookingSummary(b)));
 
+        bookingSummaryList.sort(new BookingSummaryComparator());
         return bookingSummaryList;
     }
 
