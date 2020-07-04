@@ -11,6 +11,8 @@ import tokenbooking.admin.model.ResponseStatus;
 import tokenbooking.model.UserDetails;
 import tokenbooking.service.UserDetailsService;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -36,6 +38,13 @@ public class UserController {
             LOG.warn(e.toString());
             return new ResponseEntity(new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE), HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/logout")
+    @CrossOrigin(origins = "http://localhost:4201")
+    public ResponseEntity<ResponseMessage> logoutUser(Principal principal) {
+        LOG.info("Logged out user {} successfully ", principal.getName());
+        return new ResponseEntity(new ResponseMessage("Logged out successfully", ResponseStatus.SUCCESS), HttpStatus.OK);
     }
 
 }

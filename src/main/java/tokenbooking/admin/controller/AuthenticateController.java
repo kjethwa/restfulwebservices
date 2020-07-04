@@ -15,6 +15,7 @@ import tokenbooking.admin.model.AuthenticationResponse;
 import tokenbooking.admin.service.MyUserDetailsService;
 import tokenbooking.admin.util.JwtUtil;
 import tokenbooking.model.UserDetails;
+import tokenbooking.repository.UserDetailsRepository;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,9 @@ public class AuthenticateController {
     @Autowired
     MyUserDetailsService myUserDetailsService;
 
+    @Autowired
+    UserDetailsRepository userDetailsRepository;
+
     @PostMapping("/authenticate")
     @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<AuthenticationResponse> authenticate(HttpServletRequest request, HttpServletResponse response, @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
@@ -49,6 +53,8 @@ public class AuthenticateController {
 
         String jwt = jwtUtil.generateToken(myUserDetailsService.loadUserByUsername(authenticationRequest.getUsername()));
 
+        UserDetails userDetails = userDetailsRepository.findByLoginId(authenticationRequest.getUsername());
+
         /*Cookie tokenCookie = new Cookie("token",jwt);
         //tokenCookie.setSecure(true);
         //tokenCookie.setHttpOnly(true);
@@ -56,7 +62,7 @@ public class AuthenticateController {
         //tokenCookie.setPath("/");
         response.addCookie(tokenCookie);*/
 
-        return ResponseEntity.ok().body(new AuthenticationResponse(jwt, authenticationRequest.getUsername(), null));
+        return ResponseEntity.ok().body(new AuthenticationResponse(jwt, userDetails.getFullName(), null));
     }
 
     @PostMapping("/encode")
