@@ -7,6 +7,7 @@ import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
 import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.repository.SessionDetailsRepository;
+import tokenbooking.repository.UserDetailsRepository;
 import tokenbooking.utils.*;
 
 import java.time.DayOfWeek;
@@ -31,31 +32,22 @@ public class SessionService {
     @Autowired
     BookingRepository bookingRepository;
 
-    public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId,Long userId) throws Exception {
+    @Autowired
+    UserDetailsRepository userDetailsRepository;
+
+    public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId, String loginId) throws Exception {
+        UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
 
-        checkAllSessionIsPresentOrCreate(allAvailableSessions,clientId);
+        checkAllSessionIsPresentOrCreate(allAvailableSessions, clientId);
 
-        List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions,userId);
+        List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions, userDetails.getUserId());
         userSessionSummaries.sort(new UserSessionSummaryComparator());
 
         clientAndSessionDetails.setSessions(userSessionSummaries);
 
-        return clientAndSessionDetails;
-    }
-
-    public List<ClientAndSessionDetails> getAllSessionDetailsOfAllActiveClients(Long userId) {
-        List<ClientAndSessionDetails> clientAndSessionDetails = new ArrayList<>();
-        List<ClientNameAndId> clientNameAndIds = clientService.getListOfAllActiveClients();
-        clientNameAndIds.stream().forEach(clientNameAndId -> {
-            try {
-                clientAndSessionDetails.add(this.getSessionDetailsOfClientWithClientNameAndAddressSummary(clientNameAndId.getClientId(), userId));
-            } catch (Exception e) {
-                // TODO add logger and handle exception
-            }
-        });
         return clientAndSessionDetails;
     }
 

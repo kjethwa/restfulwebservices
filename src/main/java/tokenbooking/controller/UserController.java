@@ -1,26 +1,41 @@
 package tokenbooking.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tokenbooking.admin.model.ResponseMessage;
+import tokenbooking.admin.model.ResponseStatus;
 import tokenbooking.model.UserDetails;
 import tokenbooking.service.UserDetailsService;
 
-@CrossOrigin
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class UserController {
+
+    private static Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @GetMapping("{userId}")
+    @GetMapping("/user/{userId}")
+    @CrossOrigin(origins = "http://localhost:4201")
     public UserDetails getUser(@PathVariable Long userId) {
         return userDetailsService.getUser(userId);
     }
 
-    @PostMapping
-    public UserDetails saveUserDetails(@RequestBody UserDetails userDetails) {
-            return  userDetailsService.saveuserDetails(userDetails);
+    @PostMapping("/register")
+    @CrossOrigin(origins = "http://localhost:4201")
+    public ResponseEntity<ResponseMessage> saveUserDetails(@RequestBody UserDetails userDetails) {
+        try {
+            userDetailsService.saveUserDetails(userDetails);
+            return new ResponseEntity(new ResponseMessage("Registered successfully", ResponseStatus.SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.warn(e.toString());
+            return new ResponseEntity(new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE), HttpStatus.OK);
+        }
     }
 
 }

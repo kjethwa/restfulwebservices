@@ -14,12 +14,9 @@ import tokenbooking.admin.util.JwtUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -35,17 +32,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String username = null;
-        String jwt = null;
-        Cookie[] list = request.getCookies();
-
-        if (list != null) {
-            Optional<String> jwtOptional = Arrays.stream(list).filter(cookie -> cookie.getName().equals("token")).map(Cookie::getValue).findFirst();
-            jwt = jwtOptional.get();
-        }
-        if (jwt != null) {
-            username = jwtUtil.extractUsername(jwt);
-        }
+        ExtractUserName extractUserName = new ExtractUserName(request).invoke();
+        String username = extractUserName.getUsername();
+        String jwt = extractUserName.getJwt();
 
         LOG.debug("Filtering request for user {} ", username);
 
@@ -67,4 +56,37 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
+    private class ExtractUserName {
+        private HttpServletRequest request;
+        private String username;
+        private String jwt;
+
+        public ExtractUserName(HttpServletRequest request) {
+            this.request = request;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getJwt() {
+            return jwt;
+        }
+
+        public ExtractUserName invoke() {
+            final String authorizationHeader = request.getHeader("Authorization");
+            try {
+                username = null;
+                jwt = null;
+
+                if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                    jwt = authorizationHeader.substring(7);
+                    username = jwtUtil.extractUsername(jwt);
+                }
+            } catch (Exception e) {
+                LOG.info(e.getMessage());
+            }
+            return this;
+        }
+    }
 }

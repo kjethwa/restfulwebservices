@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import tokenbooking.model.UserRole;
+import tokenbooking.model.UserRoleEnum;
 import tokenbooking.repository.UserDetailsRepository;
 import tokenbooking.repository.UserRoleRepository;
 
@@ -29,7 +30,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
         List<UserRole> userRoleList = findRolesByUserName.findByUserId(userDetailsDB.getUserId());
 
-        List<SimpleGrantedAuthority> roles = userRoleList.stream().map(UserRole::getRole).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<SimpleGrantedAuthority> roles = userRoleList.stream().map( userRole -> userRole.getRole().label).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         UserDetails userDetails = new User(userDetailsDB.getLoginId(), userDetailsDB.getPassword(), roles);
         return userDetails;

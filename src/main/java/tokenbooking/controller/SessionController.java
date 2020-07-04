@@ -9,6 +9,7 @@ import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.service.ClientService;
 import tokenbooking.service.SessionService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController()
@@ -28,26 +29,12 @@ public class SessionController {
 
     @CrossOrigin(origins = "http://localhost:4201")
     @RequestMapping(value = "/enduserapi/clients/{clientId}/sessions", method = RequestMethod.GET)
-    public ClientAndSessionDetails getAllActiveSessionsOfClient(@PathVariable Long clientId, @RequestParam Long userId) {
+    public ClientAndSessionDetails getAllActiveSessionsOfClient(@PathVariable Long clientId, Principal principal) {
         try {
-            if (StringUtils.isEmpty(userId)) {
+            if (StringUtils.isEmpty(principal)) {
                 throw new Exception("Invalid request");
             }
-                return sessionService.getSessionDetailsOfClientWithClientNameAndAddressSummary(clientId, userId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @CrossOrigin(origins = "http://localhost:4201")
-    @RequestMapping(value = "/enduserapi/clients/sessions", method = RequestMethod.GET)
-    public List<ClientAndSessionDetails> getAllActiveSessionsOfAllClients(@RequestParam Long userId) {
-        try {
-            if (StringUtils.isEmpty(userId)) {
-                throw new Exception("Invalid request");
-            }
-            return sessionService.getAllSessionDetailsOfAllActiveClients(userId);
+                return sessionService.getSessionDetailsOfClientWithClientNameAndAddressSummary(clientId, principal.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }

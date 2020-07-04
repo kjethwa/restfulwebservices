@@ -31,20 +31,20 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();/*.authorizeRequests()
+        http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/*.js").permitAll()
                 .antMatchers("/*.map").permitAll()
                 .antMatchers("/*.ico").permitAll()
                 .antMatchers("/*.png").permitAll()
                 .antMatchers("/auth/*").permitAll()
-                .antMatchers("/authenticate").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/enduserapi/*").hasAnyRole("USER","SUPER_ADMIN")
+                .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-       http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
+       http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 /*
     @Override

@@ -13,6 +13,7 @@ public class UserDetails {
     private Long userId;
     private String firstName;
     private String lastName;
+    private String fullName;
     private String loginId;
     private String phoneNumber;
     private String password;
@@ -81,5 +82,13 @@ public class UserDetails {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

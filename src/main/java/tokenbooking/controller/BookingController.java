@@ -7,6 +7,7 @@ import tokenbooking.model.BookingSummary;
 import tokenbooking.model.ClientAndSessionDetails;
 import tokenbooking.service.BookingService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,9 +18,9 @@ public class BookingController {
 
     @CrossOrigin(origins = "http://localhost:4201")
     @RequestMapping(value = "/enduserapi/booktoken", method = RequestMethod.POST)
-    public BookingDetails bookToken(@RequestBody BookingDetails bookingDetails) {
+    public BookingDetails bookToken(@RequestBody BookingDetails bookingDetails, Principal principal) {
         try {
-            return bookingService.bookToken(bookingDetails);
+            return bookingService.bookToken(bookingDetails, principal.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,9 +28,9 @@ public class BookingController {
     }
 
     @CrossOrigin(origins = "http://localhost:4201")
-    @RequestMapping(value = "/enduserapi/users/{userId}/bookings", method = RequestMethod.GET)
-    public List<BookingSummary> getAllBookingsOfUser(@PathVariable Long userId) {
-        return bookingService.getAllBookingOfUser(userId);
+    @RequestMapping(value = "/enduserapi/users/bookings", method = RequestMethod.GET)
+    public List<BookingSummary> getAllBookingsOfUser(Principal principal) {
+        return bookingService.getAllBookingOfUser(principal.getName());
     }
 
     @CrossOrigin(origins = "http://localhost:4201")

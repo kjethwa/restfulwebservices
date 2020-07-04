@@ -1,14 +1,12 @@
 package tokenbooking.service;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tokenbooking.comparator.BookingSummaryComparator;
 import tokenbooking.model.*;
-import tokenbooking.repository.BookingRepository;
-import tokenbooking.repository.ClientOperationRepository;
-import tokenbooking.repository.ClientRepository;
-import tokenbooking.repository.SessionDetailsRepository;
+import tokenbooking.repository.*;
 import tokenbooking.utils.*;
 
 import java.time.LocalDateTime;
@@ -34,9 +32,15 @@ public class BookingService {
     @Autowired
     ClientRepository clientRepository;
 
-    public synchronized BookingDetails bookToken(BookingDetails bookingDetails) throws Exception {
+    @Autowired
+    UserDetailsRepository userDetailsRepository;
+
+    public synchronized BookingDetails bookToken(BookingDetails bookingDetails, String loginId) throws Exception {
 
         if (!StringUtils.isEmpty(bookingDetails)) {
+
+            UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
+            bookingDetails.setUserId(userDetails.getUserId());
 
             if (StringUtils.isEmpty(bookingDetails.getSessionId()) || StringUtils.isEmpty(bookingDetails.getUserId())) {
                 throw new Exception("Invalid booking reguest");
@@ -59,10 +63,13 @@ public class BookingService {
         return bookingDetails;
     }
 
-    public List<BookingSummary> getAllBookingOfUser(Long userId) {
+    public List<BookingSummary> getAllBookingOfUser(String loginId) {
+
+        UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
+
         List<BookingSummary> bookingSummaryList = new ArrayList<>();
 
-        List<BookingDetails> allBookings = new ArrayList<>(bookingRepository.findByUserId(userId));
+        List<BookingDetails> allBookings = new ArrayList<>(bookingRepository.findByUserId(userDetails.getUserId()));
 
         allBookings.forEach(b -> bookingSummaryList.add(this.getBookingSummary(b)));
 

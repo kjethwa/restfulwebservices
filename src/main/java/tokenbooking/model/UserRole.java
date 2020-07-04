@@ -1,9 +1,6 @@
 package tokenbooking.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class UserRole {
@@ -14,7 +11,8 @@ public class UserRole {
 
     private Long userId;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role;
 
     public Long getId() {
         return id;
@@ -32,11 +30,11 @@ public class UserRole {
         this.userId = userId;
     }
 
-    public String getRole() {
+    public UserRoleEnum getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRoleEnum role) {
         this.role = role;
     }
 }
