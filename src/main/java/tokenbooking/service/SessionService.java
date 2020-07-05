@@ -1,7 +1,11 @@
 package tokenbooking.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tokenbooking.comparator.UserSessionSummaryComparator;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
@@ -19,6 +23,8 @@ import static tokenbooking.model.Constants.*;
 
 @Service
 public class SessionService {
+
+    private static Logger LOG = LoggerFactory.getLogger(SessionService.class);
 
     @Autowired
     ClientService clientService;
@@ -40,8 +46,6 @@ public class SessionService {
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
-
-        checkAllSessionIsPresentOrCreate(allAvailableSessions, clientId);
 
         List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions, userDetails.getUserId());
         userSessionSummaries.sort(new UserSessionSummaryComparator());
@@ -72,42 +76,56 @@ public class SessionService {
         return sessionDetails.getNextAvailableToken();
     }
 
-    private void checkAllSessionIsPresentOrCreate(List<SessionDetails> allAvailableSessions, Long clientId) {
-        Client client = clientService.getClientById(clientId);
-        List<ClientOperation> daysOfOperation = client.getDaysOfOperation();
-        Map<DayOfWeek, List<ClientOperation>> mapOfDaysOfOperation = new HashMap<>();
-        for (ClientOperation clientOperation : daysOfOperation) {
-            if (mapOfDaysOfOperation.get(clientOperation.getDay()) == null) {
-                mapOfDaysOfOperation.put(clientOperation.getDay(), new ArrayList<>());
-            }
-            mapOfDaysOfOperation.get(clientOperation.getDay()).add(clientOperation);
-        }
-
-        //create Map for currently available sessions
-        Map<LocalDate, List<SessionDetails>> mapOfSessions = new TreeMap<>();
-        for (SessionDetails sessionDetails : allAvailableSessions) {
-            if (mapOfSessions.get(sessionDetails.getDate()) == null) {
-                mapOfSessions.put(sessionDetails.getDate(), new ArrayList<>());
-            }
-            mapOfSessions.get(sessionDetails.getDate()).add(sessionDetails);
-        }
-
-        //check the session if not present for the day create one
-        LocalDate nextDate = HelperUtil.getCurrentDate();
-        for (int i = 0; i <= MAX_DAYS_OF_SESSION; i++) {
-            if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null) {
-                Set<Long> presentOperationIds = new HashSet<>();
-                if (mapOfSessions.get(nextDate) != null)
-                   presentOperationIds = mapOfSessions.get(nextDate).stream().map(SessionDetails::getOperationId).collect(Collectors.toSet());
-
-                Set<Long> finalPresentOperationIds = presentOperationIds;
-                List<ClientOperation> clientOperationsToBeCreated = mapOfDaysOfOperation.get(nextDate.getDayOfWeek()).stream().filter(s -> !finalPresentOperationIds.contains(s.getOperationId())).collect(Collectors.toList());
-
-                createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId);
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional()
+    public void checkAllSessionIsPresentOrCreate() {
+        LOG.info("Starting cron job");
+        List<ClientNameAndId> clientNameAndIds = clientService.getListOfAllActiveClients();
+        Iterator<ClientNameAndId> iterator = clientNameAndIds.iterator();
+        while(iterator.hasNext()) {
+            ClientNameAndId clientNameAndId = iterator.next();
+            Long clientId = clientNameAndId.getClientId();
+            Integer createdSessionCount = 0 ;
+            List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
+            Client client = clientService.getClientById(clientId);
+            List<ClientOperation> daysOfOperation = client.getDaysOfOperation();
+            Map<DayOfWeek, List<ClientOperation>> mapOfDaysOfOperation = new HashMap<>();
+            for (ClientOperation clientOperation : daysOfOperation) {
+                if (mapOfDaysOfOperation.get(clientOperation.getDay()) == null) {
+                    mapOfDaysOfOperation.put(clientOperation.getDay(), new ArrayList<>());
+                }
+                mapOfDaysOfOperation.get(clientOperation.getDay()).add(clientOperation);
             }
 
-            nextDate = nextDate.plusDays(1);
+            //create Map for currently available sessions
+            Map<LocalDate, List<SessionDetails>> mapOfSessions = new TreeMap<>();
+            for (SessionDetails sessionDetails : allAvailableSessions) {
+                if (mapOfSessions.get(sessionDetails.getDate()) == null) {
+                    mapOfSessions.put(sessionDetails.getDate(), new ArrayList<>());
+                }
+                mapOfSessions.get(sessionDetails.getDate()).add(sessionDetails);
+            }
+
+            //check the session if not present for the day create one
+            LocalDate nextDate = HelperUtil.getCurrentDate();
+            for (int i = 0; i <= MAX_DAYS_OF_SESSION; i++) {
+                if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null) {
+                    Set<Long> presentOperationIds = new HashSet<>();
+                    if (mapOfSessions.get(nextDate) != null)
+                        presentOperationIds = mapOfSessions.get(nextDate).stream().map(SessionDetails::getOperationId).collect(Collectors.toSet());
+
+                    Set<Long> finalPresentOperationIds = presentOperationIds;
+                    List<ClientOperation> clientOperationsToBeCreated = mapOfDaysOfOperation.get(nextDate.getDayOfWeek()).stream().filter(s -> !finalPresentOperationIds.contains(s.getOperationId())).collect(Collectors.toList());
+
+                    createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId);
+                    createdSessionCount = clientOperationsToBeCreated.size();
+                }
+
+                nextDate = nextDate.plusDays(1);
+            }
+            LOG.info("Created " + createdSessionCount + " sessions for client " + clientId);
         }
+        LOG.info("Finished cron job");
     }
 
     private List<UserSessionSummary> checkIsSessionHasAllFieldsOrCopyFromClientDetails(List<SessionDetails> allAvailableSessions, Long userId) throws Exception {
