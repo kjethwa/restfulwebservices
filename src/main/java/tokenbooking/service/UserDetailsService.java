@@ -28,6 +28,7 @@ public class UserDetailsService {
         validate(userDetailsDetails);
 
         userDetailsDetails.setPassword(encode(userDetailsDetails.getPassword()));
+        userDetailsDetails.setStatus("ACTIVE");
 
         UserDetails userDetails = userDetailsRepository.save(userDetailsDetails);
         UserRole userRole = new UserRole();

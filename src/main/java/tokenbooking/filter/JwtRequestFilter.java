@@ -50,8 +50,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
-        } else {
-            LOG.info("Will this ever be called?? Waiting for this is log....");
+        } else if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            LOG.info("Will this ever be called?? Waiting for this in log....");
         }
         chain.doFilter(request, response);
     }

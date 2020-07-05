@@ -76,7 +76,7 @@ public class SessionService {
         return sessionDetails.getNextAvailableToken();
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "1/60 * * * * *")
     @Transactional()
     public void checkAllSessionIsPresentOrCreate() {
         LOG.info("Starting cron job");

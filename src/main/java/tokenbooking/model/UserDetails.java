@@ -19,6 +19,7 @@ public class UserDetails {
     private String password;
     private String gender;
     private String status;
+    private Long clientId;
 
     public Long getUserId() {
         return userId;
@@ -90,5 +91,13 @@ public class UserDetails {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tokenbooking.model.AdminSessionSummary;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -28,10 +29,13 @@ public class AdminSessionController {
         }
     }
 
-    @GetMapping(value = "/admin/sessions/{clientId}")
-    public ResponseMessage getAllSessionsOfClient(@PathVariable Long clientId) {
+    @GetMapping(value = "/admin/sessions")
+    public ResponseMessage getAllSessionsOfClient(Principal principal) {
         try {
-            List<AdminSessionSummary> adminSessionSummaries = adminSessionService.getAllSessionDetails(clientId);
+            if(principal == null){
+                throw new AdminException("Inactive inactive");
+            }
+            List<AdminSessionSummary> adminSessionSummaries = adminSessionService.getAllSessionDetails(principal.getName());
             return new ResponseMessage(adminSessionSummaries, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);

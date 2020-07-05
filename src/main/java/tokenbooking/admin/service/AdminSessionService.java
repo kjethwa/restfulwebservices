@@ -1,5 +1,6 @@
 package tokenbooking.admin.service;
 
+import org.apache.catalina.User;
 import tokenbooking.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,7 @@ public class AdminSessionService {
                 setSequenceNumber(previousBookingDetails, nextBooking);
                 tokenInfo = getTokenInfo(nextBooking);
                 tokenInfo.setHasMoreTokens(true);
-            } else {
+            } else if (previousBookingDetails != null) {
                 tokenInfo = getTokenInfo(previousBookingDetails);
                 tokenInfo.setHasMoreTokens(false);
             }
@@ -90,7 +91,9 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public List<AdminSessionSummary> getAllSessionDetails(Long clientId) {
+    public List<AdminSessionSummary> getAllSessionDetails(String loginId) {
+        UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
+        Long clientId = userDetails.getClientId();
         LOG.debug("Getting all session details of clientId {}", clientId);
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
         LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
