@@ -17,9 +17,8 @@ public class AdminSessionSummary {
     private Integer submittedTokens;
     private Integer bookedTokens;
     private Integer completedTokens;
-    private Long clientId;
-    private String clientName;
     private DayOfWeek day;
+    private String status;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
@@ -74,14 +73,6 @@ public class AdminSessionSummary {
         this.completedTokens = completedTokens;
     }
 
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -106,19 +97,19 @@ public class AdminSessionSummary {
         this.toTime = toTime;
     }
 
-    public String getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
-    }
-
     public DayOfWeek getDay() {
         return day;
     }
 
     public void setDay(DayOfWeek day) {
         this.day = day;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

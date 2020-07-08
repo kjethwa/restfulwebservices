@@ -7,10 +7,9 @@ import tokenbooking.admin.model.TokenInfo;
 import tokenbooking.admin.service.AdminSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tokenbooking.model.AdminSessionSummary;
+import tokenbooking.model.AdminSummary;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4201", maxAge = 3600)
@@ -35,8 +34,8 @@ public class AdminSessionController {
             if(principal == null){
                 throw new AdminException("Inactive inactive");
             }
-            List<AdminSessionSummary> adminSessionSummaries = adminSessionService.getAllSessionDetails(principal.getName());
-            return new ResponseMessage(adminSessionSummaries, ResponseStatus.SUCCESS);
+            AdminSummary adminSummary = adminSessionService.getAllSessionDetails(principal.getName());
+            return new ResponseMessage(adminSummary, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }
@@ -72,11 +71,14 @@ public class AdminSessionController {
         }
     }
 
-    @GetMapping(value = "/admin/activesession/{clientId}")
-    public ResponseMessage getActiveSession(@PathVariable Long clientId) {
+    @GetMapping(value = "/admin/activesession")
+    public ResponseMessage getActiveSession(Principal principal) {
         try {
-            AdminSessionSummary adminSessionSummary = adminSessionService.getActiveSession(clientId);
-            return new ResponseMessage(adminSessionSummary, ResponseStatus.SUCCESS);
+            if(principal == null){
+                throw new AdminException("Inactive inactive");
+            }
+            AdminSummary adminSummary = adminSessionService.getActiveSession(principal.getName());
+            return new ResponseMessage(adminSummary, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }

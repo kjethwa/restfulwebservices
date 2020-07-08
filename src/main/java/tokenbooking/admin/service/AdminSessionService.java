@@ -91,13 +91,13 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public List<AdminSessionSummary> getAllSessionDetails(String loginId) {
+    public AdminSummary getAllSessionDetails(String loginId) {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         Long clientId = userDetails.getClientId();
         LOG.debug("Getting all session details of clientId {}", clientId);
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
         LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
-        return allAvailableSessions.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
+        return getAdminSummary(clientId, allAvailableSessions);
     }
 
     @Transactional()
@@ -105,7 +105,7 @@ public class AdminSessionService {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
 
         if (COMPLETED.equals(sessionDetails.getStatus())) {
-            throw new AdminException("Session already Completed");
+           return;
         }
 
         if (ACTIVE.equals(sessionDetails.getStatus()) || INPROGRESS.equals(sessionDetails.getStatus())) {
@@ -116,15 +116,16 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public AdminSessionSummary getActiveSession(Long clientId) {
+    public AdminSummary getActiveSession(String loginId) {
+        UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
+        Long clientId = userDetails.getClientId();
+
         List<SessionDetails> sessionDetails = (List<SessionDetails>) sessionDetailsRepository.findByClientIdAndStatusIn(clientId, Arrays.asList(INPROGRESS));
 
         if (sessionDetails.isEmpty()) {
             throw new AdminException("No Active session found");
-        } else if (sessionDetails.size() > 1) {
-            throw new AdminException("Multiple active session found");
         } else {
-            return getAdminSessionSummary(sessionDetails.iterator().next());
+            return getAdminSummary(clientId, sessionDetails);
         }
     }
 
@@ -157,20 +158,29 @@ public class AdminSessionService {
         return !result.isEmpty();
     }
 
+    private AdminSummary getAdminSummary(Long clientId, List<SessionDetails> sessionDetailsList) {
+        AdminSummary adminSummary = new AdminSummary();
+
+        List<AdminSessionSummary> adminSessionSummaries = sessionDetailsList.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
+        Client client = clientRepository.findOne(clientId);
+        adminSummary.setClientName(client.getClientName());
+        adminSummary.setClientId(clientId);
+        adminSummary.setAdminSessionSummaryList(adminSessionSummaries);
+
+        return adminSummary;
+    }
+
     private AdminSessionSummary getAdminSessionSummary(SessionDetails sessionDetails) {
         AdminSessionSummary adminSessionSummary = new AdminSessionSummary();
         adminSessionSummary.setAvailableTokens(sessionDetails.getAvailableToken());
         adminSessionSummary.setBookedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BOOKED).intValue());
         adminSessionSummary.setSubmittedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), SUBMITTED).intValue());
         adminSessionSummary.setCompletedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), COMPLETED).intValue());
-        adminSessionSummary.setClientId(sessionDetails.getClientId());
         adminSessionSummary.setSessionId(sessionDetails.getSessionId());
         adminSessionSummary.setDate(sessionDetails.getDate());
         adminSessionSummary.setFromTime(sessionDetails.getFromTime());
         adminSessionSummary.setToTime(sessionDetails.getToTime());
-
-        Client client = clientRepository.findOne(sessionDetails.getClientId());
-        adminSessionSummary.setClientName(client.getClientName());
+        adminSessionSummary.setStatus(sessionDetails.getStatus());
 
         ClientOperation clientOperation = clientOperationRepository.findOne(sessionDetails.getOperationId());
         adminSessionSummary.setDay(clientOperation.getDay());
