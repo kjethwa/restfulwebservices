@@ -3,13 +3,14 @@ package tokenbooking.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tokenbooking.admin.comparator.DateAndFromTimeComparator;
 import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
 import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class BookingSummary {
+public class BookingSummary implements DateAndFromTimeComparator {
 
     private Long clientId;
     private String clientName;

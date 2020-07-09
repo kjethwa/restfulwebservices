@@ -3,15 +3,15 @@ package tokenbooking.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tokenbooking.admin.comparator.DateAndFromTimeComparator;
 import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
 import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
-public class AdminSessionSummary {
+public class AdminSessionSummary implements DateAndFromTimeComparator {
     private Long sessionId;
     private Integer availableTokens;
     private Integer submittedTokens;

@@ -3,21 +3,15 @@ package tokenbooking.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import tokenbooking.comparator.UserSessionSummaryComparator;
+import tokenbooking.admin.comparator.DateAndFromTimeComparatorImp;
 import tokenbooking.model.*;
 import tokenbooking.repository.BookingRepository;
-import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.repository.SessionDetailsRepository;
 import tokenbooking.repository.UserDetailsRepository;
 import tokenbooking.utils.*;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static tokenbooking.model.Constants.*;
 
@@ -48,8 +42,7 @@ public class SessionService {
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
 
         List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions, userDetails.getUserId());
-        userSessionSummaries.sort(new UserSessionSummaryComparator());
-
+        userSessionSummaries.sort(new DateAndFromTimeComparatorImp());
         clientAndSessionDetails.setSessions(userSessionSummaries);
 
         return clientAndSessionDetails;

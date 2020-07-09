@@ -1,10 +1,9 @@
 package tokenbooking.service;
 
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import tokenbooking.comparator.BookingSummaryComparator;
+import tokenbooking.admin.comparator.DateAndFromTimeComparatorImp;
 import tokenbooking.model.*;
 import tokenbooking.repository.*;
 import tokenbooking.utils.*;
@@ -73,7 +72,7 @@ public class BookingService {
 
         allBookings.forEach(b -> bookingSummaryList.add(this.getBookingSummary(b)));
 
-        bookingSummaryList.sort(new BookingSummaryComparator());
+        bookingSummaryList.sort(new DateAndFromTimeComparatorImp());
         return bookingSummaryList;
     }
 

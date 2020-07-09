@@ -40,6 +40,19 @@ public class AdminSessionController {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }
     }
+    @GetMapping(value = "/admin/sessions/today")
+    public ResponseMessage getTodaySessionsOfClient(Principal principal) {
+        try {
+            if(principal == null){
+                throw new AdminException("Inactive inactive");
+            }
+            AdminSummary adminSummary = adminSessionService.getAllSessionDetails(principal.getName());
+            return new ResponseMessage(adminSummary, ResponseStatus.SUCCESS);
+        } catch (AdminException e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
+    }
+
 
     @GetMapping(value = "/admin/nexttoken/{sessionId}")
     public ResponseMessage nextToken(@PathVariable Long sessionId) {

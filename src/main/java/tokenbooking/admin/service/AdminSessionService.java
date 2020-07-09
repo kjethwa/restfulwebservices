@@ -1,6 +1,6 @@
 package tokenbooking.admin.service;
 
-import org.apache.catalina.User;
+import tokenbooking.admin.comparator.DateAndFromTimeComparatorImp;
 import tokenbooking.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,10 +79,10 @@ public class AdminSessionService {
 
             if (nextBooking != null) {
                 setSequenceNumber(previousBookingDetails, nextBooking);
-                tokenInfo = getTokenInfo(nextBooking);
+                tokenInfo = getTokenInfo(nextBooking, sessionDetails);
                 tokenInfo.setHasMoreTokens(true);
             } else if (previousBookingDetails != null) {
-                tokenInfo = getTokenInfo(previousBookingDetails);
+                tokenInfo = getTokenInfo(previousBookingDetails, sessionDetails);
                 tokenInfo.setHasMoreTokens(false);
             }
 
@@ -105,7 +105,7 @@ public class AdminSessionService {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
 
         if (COMPLETED.equals(sessionDetails.getStatus())) {
-           return;
+            return;
         }
 
         if (ACTIVE.equals(sessionDetails.getStatus()) || INPROGRESS.equals(sessionDetails.getStatus())) {
@@ -137,7 +137,7 @@ public class AdminSessionService {
 
         BookingDetails bookingDetails = bookingService.getBookingOfLastSequenceNumber(sessionId);
 
-        TokenInfo tokenInfo = bookingDetails == null ? null : getTokenInfo(bookingDetails);
+        TokenInfo tokenInfo = bookingDetails == null ? null : getTokenInfo(bookingDetails, sessionDetails);
 
         if (tokenInfo != null) {
             tokenInfo.setHasMoreTokens(true);
@@ -165,6 +165,7 @@ public class AdminSessionService {
         Client client = clientRepository.findOne(clientId);
         adminSummary.setClientName(client.getClientName());
         adminSummary.setClientId(clientId);
+        adminSessionSummaries.sort(new DateAndFromTimeComparatorImp());
         adminSummary.setAdminSessionSummaryList(adminSessionSummaries);
 
         return adminSummary;
@@ -188,13 +189,15 @@ public class AdminSessionService {
         return adminSessionSummary;
     }
 
-    private TokenInfo getTokenInfo(BookingDetails nextBooking) {
+    private TokenInfo getTokenInfo(BookingDetails nextBooking, SessionDetails sessionDetails) {
         UserDetails userDetails = userDetailsRepository.getOne(nextBooking.getUserId());
 
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setBookingId(nextBooking.getBookingId());
         tokenInfo.setTokenNumber(nextBooking.getTokenNumber());
-        tokenInfo.setUserName(userDetails.getFirstName() + " " + userDetails.getLastName());
+        tokenInfo.setUserName(userDetails.getFullName());
+        tokenInfo.setFromTime(sessionDetails.getFromTime());
+        tokenInfo.setToTime(sessionDetails.getToTime());
 
         return tokenInfo;
     }
