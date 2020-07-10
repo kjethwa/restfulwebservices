@@ -34,6 +34,7 @@ public class BookingService {
     @Autowired
     UserDetailsRepository userDetailsRepository;
 
+    // synchronized at method is poor locking mechanism, needs improvement
     public synchronized BookingDetails bookToken(BookingDetails bookingDetails, String loginId) throws Exception {
 
         if (!StringUtils.isEmpty(bookingDetails)) {
@@ -75,6 +76,7 @@ public class BookingService {
     public BookingSummary cancelBooking(Long bookingId) {
         BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
         bookingDetails.setStatus(BookingStatus.CANCELLED);
+        bookingDetails.setCancelledDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
 
         return getBookingSummary(bookingDetails);
@@ -83,6 +85,7 @@ public class BookingService {
     public BookingSummary submitBooking(Long bookingId) {
         BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
         bookingDetails.setStatus(BookingStatus.SUBMITTED);
+        bookingDetails.setSubmittedDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
 
         return getBookingSummary(bookingDetails);

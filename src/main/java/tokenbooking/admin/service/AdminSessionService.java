@@ -98,18 +98,35 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public void completeSession(Long sessionId) {
+    public void finishSession(Long sessionId) {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
 
-        if (SessionStatus.COMPLETED == sessionDetails.getStatus()) {
+        if (SessionStatus.FINISHED == sessionDetails.getStatus()) {
             return;
+        } else if (SessionStatus.ACTIVE == sessionDetails.getStatus()) {
+            bookingRepository.updateBookingStatusOfSessionId(BookingStatus.EXPIRED, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
+        } else if (SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
+            bookingRepository.updateBookingStatusOfSessionId(BookingStatus.EXPIRED, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED));
+            bookingRepository.updateBookingStatusOfSessionId(BookingStatus.CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.SUBMITTED));
         }
 
-        if (SessionStatus.ACTIVE == sessionDetails.getStatus() || SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
-            bookingRepository.updateBookingStatusOfSessionId(BookingStatus.CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
+        setCompletionValueAndFinishSession(sessionDetails);
+    }
+
+    @Transactional()
+    public void cancelSession(Long sessionId) {
+        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+
+        if (SessionStatus.CANCELLED == sessionDetails.getStatus()) {
+            return;
+        } else {
+            bookingRepository.updateBookingStatusOfSessionId(BookingStatus.CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED,BookingStatus.SUBMITTED));
         }
 
-        setCompletionValueAndCompleteSession(sessionDetails);
+        sessionDetails.setStatus(SessionStatus.CANCELLED);
+        sessionDetails.setNextAvailableToken(ZERO);
+        sessionDetails.setAvailableToken(ZERO);
+        sessionDetailsRepository.save(sessionDetails);
     }
 
     @Transactional()
@@ -142,8 +159,8 @@ public class AdminSessionService {
         return tokenInfo;
     }
 
-    private void setCompletionValueAndCompleteSession(SessionDetails sessionDetails) {
-        sessionDetails.setStatus(SessionStatus.COMPLETED);
+    private void setCompletionValueAndFinishSession(SessionDetails sessionDetails) {
+        sessionDetails.setStatus(SessionStatus.FINISHED);
         sessionDetails.setNextAvailableToken(ZERO);
         sessionDetails.setAvailableToken(ZERO);
         sessionDetailsRepository.save(sessionDetails);
@@ -217,11 +234,6 @@ public class AdminSessionService {
         }
 
         return bookingDetails;
-    }
-
-    private void copyClientOperationDetails(SessionDetails sessionDetails) {
-        ClientOperation clientOperation = clientOperationRepository.findOne(sessionDetails.getOperationId());
-        HelperUtil.copyClientOperationDetails(clientOperation, sessionDetails);
     }
 
 }

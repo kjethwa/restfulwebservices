@@ -77,11 +77,21 @@ public class AdminSessionController {
         }
     }
 
-    @GetMapping(value = "/admin/completesession/{sessionId}")
-    public ResponseMessage completeSession(@PathVariable Long sessionId) {
+    @GetMapping(value = "/admin/finishsession/{sessionId}")
+    public ResponseMessage finishSession(@PathVariable Long sessionId) {
         try {
-            adminSessionService.completeSession(sessionId);
+            adminSessionService.finishSession(sessionId);
             return new ResponseMessage("Session completed successfully.", ResponseStatus.SUCCESS);
+        } catch (AdminException e) {
+            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+        }
+    }
+
+    @GetMapping(value = "/admin/cancelsession/{sessionId}")
+    public ResponseMessage cancelSession(@PathVariable Long sessionId) {
+        try {
+            adminSessionService.cancelSession(sessionId);
+            return new ResponseMessage("Session cancelled successfully.", ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
         }

@@ -4,7 +4,7 @@ public enum SessionStatus {
     ACTIVE("ACTIVE"),
     INPROGRESS("INPROGRESS"),
     CANCELLED("CANCELLED"),
-    COMPLETED("COMPLETED");
+    FINISHED("FINISHED");
 
     private String value;
 

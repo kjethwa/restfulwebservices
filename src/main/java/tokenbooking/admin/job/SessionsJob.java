@@ -102,7 +102,7 @@ public class SessionsJob {
             LOG.info("Found {} sessions", sessionDetailsList.size());
             sessionDetailsList.stream().forEach(sessionDetails -> {
                 if (sessionDetails.getStatus() == SessionStatus.ACTIVE || sessionDetails.getStatus() == SessionStatus.INPROGRESS) {
-                    adminSessionService.completeSession(sessionDetails.getSessionId());
+                    adminSessionService.finishSession(sessionDetails.getSessionId());
                 }
                 /*else if (sessionDetails.getStatus().equalsIgnoreCase(CREATED)) {
                     // TODO : Session with CREATED status is as good as dummy entry, can be deleted.

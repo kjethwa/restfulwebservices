@@ -18,6 +18,7 @@ public class BookingDetails {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
     private Integer sequenceNumber;
 
     @JsonIgnore
