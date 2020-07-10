@@ -24,9 +24,6 @@ public class SessionService {
     ClientService clientService;
 
     @Autowired
-    ClientOperationService clientOperationService;
-
-    @Autowired
     SessionDetailsRepository sessionDetailsRepository;
 
     @Autowired
@@ -39,9 +36,9 @@ public class SessionService {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
-        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
 
-        List<UserSessionSummary> userSessionSummaries = checkIsSessionHasAllFieldsOrCopyFromClientDetails(allAvailableSessions, userDetails.getUserId());
+        List<UserSessionSummary> userSessionSummaries = createUserSessionSummaryAndValidate(allAvailableSessions, userDetails.getUserId());
         userSessionSummaries.sort(new DateAndFromTimeComparatorImp());
         clientAndSessionDetails.setSessions(userSessionSummaries);
 
@@ -58,7 +55,7 @@ public class SessionService {
 
     public synchronized Integer getNextAvailableToken(Long sessionId) throws Exception {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
-        if(sessionDetails.getStatus().equals(CREATED)){
+        if(sessionDetails.getStatus().equals(ACTIVE)){
             return START_TOKEN_NUMBER;
         }
 
@@ -69,7 +66,7 @@ public class SessionService {
         return sessionDetails.getNextAvailableToken();
     }
 
-    private List<UserSessionSummary> checkIsSessionHasAllFieldsOrCopyFromClientDetails(List<SessionDetails> allAvailableSessions, Long userId) throws Exception {
+    private List<UserSessionSummary> createUserSessionSummaryAndValidate(List<SessionDetails> allAvailableSessions, Long userId) throws Exception {
         Iterator<SessionDetails> iterator = allAvailableSessions.iterator();
         List<UserSessionSummary> userSessionSummaries = new ArrayList<>(allAvailableSessions.size());
         while (iterator.hasNext()) {
@@ -79,21 +76,10 @@ public class SessionService {
                 throw new Exception("Invalid session status");
             }
 
-            if (CREATED.equals(sessionDetails.getStatus())) {
-                ClientOperation clientOperation = clientOperationService.getClientOperation(sessionDetails.getOperationId());
-                userSessionSummary.setNoOfTokens(clientOperation.getNoOfTokens());
-                userSessionSummary.setToTime(clientOperation.getToTime());
-                userSessionSummary.setFromTime(clientOperation.getFromTime());
-                userSessionSummary.setAvailableToken(clientOperation.getNoOfTokens());
-
-                sessionDetails.setToTime(clientOperation.getToTime());
-            }
-            else{
-                userSessionSummary.setNoOfTokens(sessionDetails.getNoOfTokens());
-                userSessionSummary.setToTime(sessionDetails.getToTime());
-                userSessionSummary.setFromTime(sessionDetails.getFromTime());
-                userSessionSummary.setAvailableToken(sessionDetails.getAvailableToken());
-            }
+            userSessionSummary.setNoOfTokens(sessionDetails.getNoOfTokens());
+            userSessionSummary.setToTime(sessionDetails.getToTime());
+            userSessionSummary.setFromTime(sessionDetails.getFromTime());
+            userSessionSummary.setAvailableToken(sessionDetails.getAvailableToken());
             userSessionSummary.setSessionId(sessionDetails.getSessionId());
             userSessionSummary.setDate(sessionDetails.getDate());
 

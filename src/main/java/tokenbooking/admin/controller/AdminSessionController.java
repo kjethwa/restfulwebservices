@@ -68,6 +68,9 @@ public class AdminSessionController {
     public ResponseMessage lastToken(@PathVariable Long sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getLastToken(sessionId);
+            if (tokenInfo == null) {
+                tokenInfo = adminSessionService.getNextToken(sessionId);
+            }
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
             return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);

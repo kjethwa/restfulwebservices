@@ -37,7 +37,7 @@ public class SessionsJob {
 
     private static Logger LOG = LoggerFactory.getLogger(SessionsJob.class);
 
-    @Scheduled(cron = "0 15 * * * *")
+    @Scheduled(cron = "0 15/60 * * * *")
     @Transactional()
     public void checkAllSessionIsPresentOrCreate() {
         LOG.info("Starting cron job");
@@ -47,7 +47,7 @@ public class SessionsJob {
             ClientNameAndId clientNameAndId = iterator.next();
             Long clientId = clientNameAndId.getClientId();
             Integer createdSessionCount = 0 ;
-            List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(CREATED, ACTIVE, INPROGRESS)));
+            List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetween(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate()));
             Client client = clientService.getClientById(clientId);
             List<ClientOperation> daysOfOperation = client.getDaysOfOperation();
             Map<DayOfWeek, List<ClientOperation>> mapOfDaysOfOperation = new HashMap<>();
@@ -79,7 +79,7 @@ public class SessionsJob {
                     List<ClientOperation> clientOperationsToBeCreated = mapOfDaysOfOperation.get(nextDate.getDayOfWeek()).stream().filter(s -> !finalPresentOperationIds.contains(s.getOperationId())).collect(Collectors.toList());
 
                     createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId);
-                    createdSessionCount = clientOperationsToBeCreated.size();
+                    createdSessionCount += clientOperationsToBeCreated.size();
                 }
 
                 nextDate = nextDate.plusDays(1);
@@ -89,7 +89,7 @@ public class SessionsJob {
         LOG.info("Finished cron job");
     }
 
-    @Scheduled(cron = "0 30 * * * *")
+    @Scheduled(cron = "0 13/60 * * * *")
     @Transactional
     public void cancelOrCompleteOldSessions() {
         LOG.info("Starting cancel or complete old sessions job");
@@ -102,9 +102,10 @@ public class SessionsJob {
             sessionDetailsList.stream().forEach(sessionDetails -> {
                 if (sessionDetails.getStatus().equalsIgnoreCase(ACTIVE) || sessionDetails.getStatus().equalsIgnoreCase(INPROGRESS)) {
                     adminSessionService.completeSession(sessionDetails.getSessionId());
-                } else if (sessionDetails.getStatus().equalsIgnoreCase(CREATED)) {
-                    // TODO : Session with CREATED status is as good as dummy entry, can be deleted.
                 }
+                /*else if (sessionDetails.getStatus().equalsIgnoreCase(CREATED)) {
+                    // TODO : Session with CREATED status is as good as dummy entry, can be deleted.
+                }*/
             });
         }
 
@@ -117,7 +118,11 @@ public class SessionsJob {
             sessionDetails.setClientId(clientId);
             sessionDetails.setDate(nextDate);
             sessionDetails.setOperationId(clientOperation.getOperationId());
-            sessionDetails.setStatus(CREATED);
+            sessionDetails.setStatus(ACTIVE);
+            sessionDetails.setFromTime(clientOperation.getFromTime());
+            sessionDetails.setToTime(clientOperation.getToTime());
+            sessionDetails.setNoOfTokens(clientOperation.getNoOfTokens());
+            sessionDetails.setAvailableToken(clientOperation.getNoOfTokens());
             sessionDetails.setNextAvailableToken(START_TOKEN_NUMBER);
 
             allAvailableSessions.add(sessionDetailsRepository.save(sessionDetails));

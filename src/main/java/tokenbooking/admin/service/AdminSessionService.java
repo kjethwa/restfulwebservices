@@ -55,12 +55,9 @@ public class AdminSessionService {
             throw new AdminException("Can not start session other session is already in progress.");
         }
 
-        if (CREATED.equals(sessionDetails.getStatus())) {
-            copyClientOperationDetails(sessionDetails);
-        } else {
-            sessionDetails.setStatus(INPROGRESS);
-            sessionDetailsRepository.save(sessionDetails);
-        }
+        sessionDetails.setStatus(INPROGRESS);
+        sessionDetailsRepository.save(sessionDetails);
+
     }
 
     @Transactional()

@@ -6,7 +6,6 @@ public class Constants {
     public static String INACTIVE = "INACTIVE";
     public static String VERIFIED = "VERIFIED";
     public static String UNVERIFIED = "UNVERIFIED";
-    public static String CREATED = "CREATED";
     public static String INPROGRESS = "INPROGRESS";
     public static String COMPLETED = "COMPLETED";
     public static String CANCELLED = "CANCELLED";

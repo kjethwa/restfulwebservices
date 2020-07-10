@@ -53,10 +53,6 @@ public class BookingService {
 
             saveTokenDetails(bookingDetails);
 
-            if (CREATED.equals(sessionDetails.getStatus())) {
-                copyClientOperationDetails(sessionDetails);
-            }
-
             updateBookingDetailsInSession(sessionDetails);
         }
         return bookingDetails;
@@ -120,19 +116,17 @@ public class BookingService {
     }
 
     private void validateBooking(BookingDetails bookingDetails, SessionDetails sessionDetails) throws Exception {
-        if (!CREATED.equals(sessionDetails.getStatus())) {
-            if(checkIsAlreadyBookedInSession(bookingDetails,sessionDetails)) {
-                throw new Exception("Already booked a token in the session");
-            }
-            if (!sessionDetails.getNextAvailableToken().equals(bookingDetails.getTokenNumber())) {
-                throw new Exception("Token is already booked. Kindly book another token.");
-            }
-            if (bookingDetails.getTokenNumber() < sessionDetails.getNextAvailableToken()) {
-                throw new Exception("In valid Token number. Kindly book again.");
-            }
-            if (sessionDetails.getAvailableToken() == ZERO) {
-                throw new Exception("Booking is full for the current session.");
-            }
+        if (checkIsAlreadyBookedInSession(bookingDetails, sessionDetails)) {
+            throw new Exception("Already booked a token in the session");
+        }
+        if (!sessionDetails.getNextAvailableToken().equals(bookingDetails.getTokenNumber())) {
+            throw new Exception("Token is already booked. Kindly book another token.");
+        }
+        if (bookingDetails.getTokenNumber() < sessionDetails.getNextAvailableToken()) {
+            throw new Exception("In valid Token number. Kindly book again.");
+        }
+        if (sessionDetails.getAvailableToken() == ZERO) {
+            throw new Exception("Booking is full for the current session.");
         }
     }
 
@@ -147,11 +141,6 @@ public class BookingService {
         bookingRepository.save(bookingDetails);
     }
 
-    private void copyClientOperationDetails(SessionDetails sessionDetails) {
-        ClientOperation clientOperation = clientOperationRepository.findOne(sessionDetails.getOperationId());
-        HelperUtil.copyClientOperationDetails(clientOperation, sessionDetails);
-    }
-
     private void updateBookingDetailsInSession(SessionDetails sessionDetails) {
         sessionDetails.setAvailableToken(sessionDetails.getAvailableToken() - 1);
         if (sessionDetails.getAvailableToken() == 0)
@@ -159,9 +148,6 @@ public class BookingService {
         else
             sessionDetails.setNextAvailableToken(sessionDetails.getNextAvailableToken() + 1);
 
-        if (sessionDetails.getStatus().equals(CREATED)) {
-            sessionDetails.setStatus(ACTIVE);
-        }
         sessionDetailsRepository.save(sessionDetails);
     }
 }
