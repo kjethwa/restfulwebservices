@@ -48,14 +48,14 @@ public class AdminSessionService {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
-        } else if (INPROGRESS.equalsIgnoreCase(sessionDetails.getStatus())) {
+        } else if (SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
             throw new AdminException("Session already started");
         } else if (isClientHasOtherSessionInProgress(sessionDetails)) {
             LOG.info("Can not start session other session is already in progress with session id {}", sessionId);
             throw new AdminException("Can not start session other session is already in progress.");
         }
 
-        sessionDetails.setStatus(INPROGRESS);
+        sessionDetails.setStatus(SessionStatus.INPROGRESS);
         sessionDetailsRepository.save(sessionDetails);
 
     }
@@ -67,7 +67,7 @@ public class AdminSessionService {
             throw new AdminException("Session not found " + sessionId);
         }
 
-        if (!INPROGRESS.equals(sessionDetails.getStatus())) {
+        if (SessionStatus.INPROGRESS != sessionDetails.getStatus()) {
             throw new AdminException("Session not started " + sessionId);
         } else {
             BookingDetails previousBookingDetails = completePreviousToken(sessionId);
@@ -92,7 +92,7 @@ public class AdminSessionService {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         Long clientId = userDetails.getClientId();
         LOG.debug("Getting all session details of clientId {}", clientId);
-        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(SessionStatus.ACTIVE, SessionStatus.INPROGRESS)));
         LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
         return getAdminSummary(clientId, allAvailableSessions);
     }
@@ -101,12 +101,12 @@ public class AdminSessionService {
     public void completeSession(Long sessionId) {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
 
-        if (COMPLETED.equals(sessionDetails.getStatus())) {
+        if (SessionStatus.COMPLETED == sessionDetails.getStatus()) {
             return;
         }
 
-        if (ACTIVE.equals(sessionDetails.getStatus()) || INPROGRESS.equals(sessionDetails.getStatus())) {
-            bookingRepository.updateBookingStatusOfSessionId(CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BOOKED, SUBMITTED));
+        if (SessionStatus.ACTIVE == sessionDetails.getStatus() || SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
+            bookingRepository.updateBookingStatusOfSessionId(BookingStatus.CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
         }
 
         setCompletionValueAndCompleteSession(sessionDetails);
@@ -117,7 +117,7 @@ public class AdminSessionService {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         Long clientId = userDetails.getClientId();
 
-        List<SessionDetails> sessionDetails = (List<SessionDetails>) sessionDetailsRepository.findByClientIdAndStatusIn(clientId, Arrays.asList(INPROGRESS));
+        List<SessionDetails> sessionDetails = (List<SessionDetails>) sessionDetailsRepository.findByClientIdAndStatusIn(clientId, Arrays.asList(SessionStatus.INPROGRESS));
 
         if (sessionDetails.isEmpty()) {
             throw new AdminException("No Active session found");
@@ -128,7 +128,7 @@ public class AdminSessionService {
 
     public TokenInfo getLastToken(Long sessionId) {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
-        if (!INPROGRESS.equals(sessionDetails.getStatus())) {
+        if (SessionStatus.INPROGRESS != sessionDetails.getStatus()) {
             throw new AdminException("Session not yet started.");
         }
 
@@ -143,14 +143,14 @@ public class AdminSessionService {
     }
 
     private void setCompletionValueAndCompleteSession(SessionDetails sessionDetails) {
-        sessionDetails.setStatus(COMPLETED);
+        sessionDetails.setStatus(SessionStatus.COMPLETED);
         sessionDetails.setNextAvailableToken(ZERO);
         sessionDetails.setAvailableToken(ZERO);
         sessionDetailsRepository.save(sessionDetails);
     }
 
     private boolean isClientHasOtherSessionInProgress(SessionDetails sessionDetails) {
-        List<SessionDetails> result = new ArrayList<>(sessionDetailsRepository.findByClientIdAndStatusIn(sessionDetails.getClientId(), Arrays.asList(INPROGRESS)));
+        List<SessionDetails> result = new ArrayList<>(sessionDetailsRepository.findByClientIdAndStatusIn(sessionDetails.getClientId(), Arrays.asList(SessionStatus.INPROGRESS)));
 
         return !result.isEmpty();
     }
@@ -171,9 +171,9 @@ public class AdminSessionService {
     private AdminSessionSummary getAdminSessionSummary(SessionDetails sessionDetails) {
         AdminSessionSummary adminSessionSummary = new AdminSessionSummary();
         adminSessionSummary.setAvailableTokens(sessionDetails.getAvailableToken());
-        adminSessionSummary.setBookedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BOOKED).intValue());
-        adminSessionSummary.setSubmittedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), SUBMITTED).intValue());
-        adminSessionSummary.setCompletedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), COMPLETED).intValue());
+        adminSessionSummary.setBookedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BookingStatus.BOOKED).intValue());
+        adminSessionSummary.setSubmittedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BookingStatus.SUBMITTED).intValue());
+        adminSessionSummary.setCompletedTokens(bookingRepository.countBySessionIdAndStatus(sessionDetails.getSessionId(), BookingStatus.COMPLETED).intValue());
         adminSessionSummary.setSessionId(sessionDetails.getSessionId());
         adminSessionSummary.setDate(sessionDetails.getDate());
         adminSessionSummary.setFromTime(sessionDetails.getFromTime());
@@ -211,8 +211,8 @@ public class AdminSessionService {
     private BookingDetails completePreviousToken(Long sessionId) {
         BookingDetails bookingDetails = bookingService.getBookingOfLastSequenceNumber(sessionId);
 
-        if (bookingDetails != null && !COMPLETED.equalsIgnoreCase(bookingDetails.getStatus())) {
-            bookingDetails.setStatus(COMPLETED);
+        if (bookingDetails != null && BookingStatus.COMPLETED != bookingDetails.getStatus()) {
+            bookingDetails.setStatus(BookingStatus.COMPLETED);
             bookingRepository.save(bookingDetails);
         }
 

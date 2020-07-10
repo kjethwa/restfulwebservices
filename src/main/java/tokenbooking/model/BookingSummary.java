@@ -7,6 +7,8 @@ import tokenbooking.admin.comparator.DateAndFromTimeComparator;
 import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
 import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -29,7 +31,9 @@ public class BookingSummary implements DateAndFromTimeComparator {
     private LocalTime toTime;
 
     private Integer tokenNumber;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     public Long getClientId() {
         return clientId;
@@ -87,11 +91,11 @@ public class BookingSummary implements DateAndFromTimeComparator {
         this.tokenNumber = tokenNumber;
     }
 
-    public String getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(BookingStatus status) {
         this.status = status;
     }
 

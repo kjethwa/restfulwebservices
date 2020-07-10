@@ -36,7 +36,7 @@ public class SessionService {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
-        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(ACTIVE, INPROGRESS)));
+        List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(SessionStatus.ACTIVE, SessionStatus.INPROGRESS)));
 
         List<UserSessionSummary> userSessionSummaries = createUserSessionSummaryAndValidate(allAvailableSessions, userDetails.getUserId());
         userSessionSummaries.sort(new DateAndFromTimeComparatorImp());
@@ -55,7 +55,7 @@ public class SessionService {
 
     public synchronized Integer getNextAvailableToken(Long sessionId) throws Exception {
         SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
-        if(sessionDetails.getStatus().equals(ACTIVE)){
+        if (sessionDetails.getStatus() == SessionStatus.ACTIVE) {
             return START_TOKEN_NUMBER;
         }
 
@@ -93,7 +93,7 @@ public class SessionService {
     }
 
     private void checkIsAlreadyBookedInSession(SessionDetails sessionDetails, Long userId, UserSessionSummary userSessionSummary) throws Exception {
-        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), userId, Arrays.asList(BOOKED, SUBMITTED));
+        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), userId, Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
         if(bookingDetailList.size()>1){
             throw new Exception("Multiple booking found in a session by a user");
         }

@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tokenbooking.model.Client;
+import tokenbooking.model.SessionStatus;
 import tokenbooking.repository.ClientIdNameAddress;
 import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.model.ClientSearchDetails;
@@ -16,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static tokenbooking.model.Constants.ACTIVE;
 
 @Service
 public class ClientService {
@@ -55,11 +54,11 @@ public class ClientService {
     }
 
     public List<ClientNameAndId> getListOfAllActiveClients() {
-        return new ArrayList<>(clientRepository.findByStatus(ACTIVE));
+        return new ArrayList<>(clientRepository.findByStatus(SessionStatus.ACTIVE.getValue()));
     }
 
     public ClientIdNameAddress getClientNameAndAddressSummary(Long clientId) throws Exception {
-        List<ClientIdNameAddress> clientIdNameAddresses = new ArrayList<>(clientRepository.findByStatusAndClientId(ACTIVE, clientId));
+        List<ClientIdNameAddress> clientIdNameAddresses = new ArrayList<>(clientRepository.findByStatusAndClientId(SessionStatus.ACTIVE.getValue(), clientId));
         if (StringUtils.isEmpty(clientIdNameAddresses) || clientIdNameAddresses.size() != 1) {
             throw new Exception("Invalid Client Id");
         }

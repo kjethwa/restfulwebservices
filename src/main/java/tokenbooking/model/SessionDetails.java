@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
 import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -36,7 +33,8 @@ public class SessionDetails {
     @JsonSerialize(using = LocalTimeSerializer.class)
     private LocalTime toTime;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private SessionStatus status;
 
     @Override
     public boolean equals(Object o) {
@@ -107,11 +105,11 @@ public class SessionDetails {
         this.noOfTokens = noOfTokens;
     }
 
-    public String getStatus() {
+    public SessionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SessionStatus status) {
         this.status = status;
     }
 

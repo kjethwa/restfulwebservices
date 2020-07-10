@@ -74,7 +74,7 @@ public class BookingService {
 
     public BookingSummary cancelBooking(Long bookingId) {
         BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
-        bookingDetails.setStatus(CANCELLED);
+        bookingDetails.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(bookingDetails);
 
         return getBookingSummary(bookingDetails);
@@ -82,7 +82,7 @@ public class BookingService {
 
     public BookingSummary submitBooking(Long bookingId) {
         BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
-        bookingDetails.setStatus(SUBMITTED);
+        bookingDetails.setStatus(BookingStatus.SUBMITTED);
         bookingRepository.save(bookingDetails);
 
         return getBookingSummary(bookingDetails);
@@ -94,7 +94,7 @@ public class BookingService {
     }
 
     public BookingDetails getSubmittedBookingOfLeastTokenNumber(Long sessionId) {
-        BookingDetails bookingDetails = bookingRepository.findFirstBySessionIdAndStatusOrderByTokenNumberAsc(sessionId, SUBMITTED);
+        BookingDetails bookingDetails = bookingRepository.findFirstBySessionIdAndStatusOrderByTokenNumberAsc(sessionId, BookingStatus.SUBMITTED);
         return bookingDetails;
     }
 
@@ -131,12 +131,12 @@ public class BookingService {
     }
 
     private boolean checkIsAlreadyBookedInSession(BookingDetails bookingDetails, SessionDetails sessionDetails) {
-        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), bookingDetails.getUserId(), Arrays.asList(BOOKED, SUBMITTED));
+        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), bookingDetails.getUserId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
         return bookingDetailList.size() > 0;
     }
 
     private void saveTokenDetails(BookingDetails bookingDetails) {
-        bookingDetails.setStatus(BOOKED);
+        bookingDetails.setStatus(BookingStatus.BOOKED);
         bookingDetails.setCreatedDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
     }

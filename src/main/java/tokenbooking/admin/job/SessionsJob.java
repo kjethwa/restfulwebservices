@@ -10,6 +10,7 @@ import tokenbooking.admin.service.AdminSessionService;
 import tokenbooking.model.Client;
 import tokenbooking.model.ClientOperation;
 import tokenbooking.model.SessionDetails;
+import tokenbooking.model.SessionStatus;
 import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.repository.SessionDetailsRepository;
 import tokenbooking.service.ClientService;
@@ -97,10 +98,10 @@ public class SessionsJob {
         Iterator<ClientNameAndId> iterator = clientNameAndIds.iterator();
         while (iterator.hasNext()) {
             ClientNameAndId clientNameAndId = iterator.next();
-            List<SessionDetails> sessionDetailsList = sessionDetailsRepository.findByClientIdAndDateBeforeAndStatusIn(clientNameAndId.getClientId(), HelperUtil.getCurrentDate(), Arrays.asList(ACTIVE, INPROGRESS));
+            List<SessionDetails> sessionDetailsList = sessionDetailsRepository.findByClientIdAndDateBeforeAndStatusIn(clientNameAndId.getClientId(), HelperUtil.getCurrentDate(), Arrays.asList(SessionStatus.ACTIVE, SessionStatus.INPROGRESS));
             LOG.info("Found {} sessions", sessionDetailsList.size());
             sessionDetailsList.stream().forEach(sessionDetails -> {
-                if (sessionDetails.getStatus().equalsIgnoreCase(ACTIVE) || sessionDetails.getStatus().equalsIgnoreCase(INPROGRESS)) {
+                if (sessionDetails.getStatus() == SessionStatus.ACTIVE || sessionDetails.getStatus() == SessionStatus.INPROGRESS) {
                     adminSessionService.completeSession(sessionDetails.getSessionId());
                 }
                 /*else if (sessionDetails.getStatus().equalsIgnoreCase(CREATED)) {
@@ -118,7 +119,7 @@ public class SessionsJob {
             sessionDetails.setClientId(clientId);
             sessionDetails.setDate(nextDate);
             sessionDetails.setOperationId(clientOperation.getOperationId());
-            sessionDetails.setStatus(ACTIVE);
+            sessionDetails.setStatus(SessionStatus.ACTIVE);
             sessionDetails.setFromTime(clientOperation.getFromTime());
             sessionDetails.setToTime(clientOperation.getToTime());
             sessionDetails.setNoOfTokens(clientOperation.getNoOfTokens());

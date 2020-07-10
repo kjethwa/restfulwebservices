@@ -2,10 +2,7 @@ package tokenbooking.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +15,9 @@ public class BookingDetails {
     private Long sessionId;
     private Long userId;
     private Integer tokenNumber;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
     private Integer sequenceNumber;
 
     @JsonIgnore
@@ -61,11 +60,11 @@ public class BookingDetails {
         this.tokenNumber = tokenNumber;
     }
 
-    public String getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(BookingStatus status) {
         this.status = status;
     }
 

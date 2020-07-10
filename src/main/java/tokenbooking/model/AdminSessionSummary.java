@@ -7,6 +7,8 @@ import tokenbooking.admin.comparator.DateAndFromTimeComparator;
 import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
 import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +20,9 @@ public class AdminSessionSummary implements DateAndFromTimeComparator {
     private Integer bookedTokens;
     private Integer completedTokens;
     private DayOfWeek day;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private SessionStatus status;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
@@ -105,11 +109,11 @@ public class AdminSessionSummary implements DateAndFromTimeComparator {
         this.day = day;
     }
 
-    public String getStatus() {
+    public SessionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SessionStatus status) {
         this.status = status;
     }
 }
