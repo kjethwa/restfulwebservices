@@ -55,6 +55,7 @@ public class AuthenticateController {
 
         UserDetails userDetails = userDetailsRepository.findByLoginId(authenticationRequest.getUsername());
 
+        String role = getRole(userDetails);
         /*Cookie tokenCookie = new Cookie("token",jwt);
         //tokenCookie.setSecure(true);
         //tokenCookie.setHttpOnly(true);
@@ -62,12 +63,20 @@ public class AuthenticateController {
         //tokenCookie.setPath("/");
         response.addCookie(tokenCookie);*/
 
-        return ResponseEntity.ok().body(new AuthenticationResponse(jwt, userDetails.getFullName(), null));
+        return ResponseEntity.ok().body(new AuthenticationResponse(jwt, userDetails.getFullName(), role, null));
     }
 
     @PostMapping("/encode")
     public String encode(@RequestParam String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder.encode(password);
+    }
+
+    private String getRole(UserDetails userDetails) {
+        if (userDetails.getClientId() != null) {
+            return "ADMIN";
+        } else {
+            return "USER";
+        }
     }
 }

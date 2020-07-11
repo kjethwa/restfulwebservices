@@ -4,10 +4,12 @@ public class AuthenticationResponse {
     private String jwt;
     private String errorMessage;
     private String userName;
+    private String role;
 
-    public AuthenticationResponse(String jwt,String userName,String errorMessage) {
+    public AuthenticationResponse(String jwt,String userName,String role,String errorMessage) {
         this.jwt = jwt;
         this.userName = userName;
+        this.role = role;
         this.errorMessage = errorMessage;
     }
 
@@ -38,5 +40,13 @@ public class AuthenticationResponse {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
