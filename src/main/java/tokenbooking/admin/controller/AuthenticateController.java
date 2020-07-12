@@ -43,6 +43,7 @@ public class AuthenticateController {
     @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<AuthenticationResponse> authenticate(HttpServletRequest request, HttpServletResponse response, @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
+            authenticationRequest.setUsername(authenticationRequest.getUsername().toLowerCase());
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
             LOG.debug("User with userId {} login failed", authenticationRequest.getUsername());

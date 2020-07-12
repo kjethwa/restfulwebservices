@@ -38,8 +38,10 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*.ico").permitAll()
                 .antMatchers("/*.png").permitAll()
                 .antMatchers("/auth/*").permitAll()
-                .antMatchers("/enduserapi/*").hasAnyRole("USER","SUPER_ADMIN")
+                .antMatchers("/enduserapi/**").hasAnyRole("USER","SUPER_ADMIN")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
+                .antMatchers("/base/client/**").hasAnyRole("USER","SUPER_ADMIN")
+                .antMatchers("/base/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

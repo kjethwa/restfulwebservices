@@ -27,6 +27,7 @@ public class UserDetailsService {
 
         validate(userDetailsDetails);
 
+        userDetailsDetails.setLoginId(userDetailsDetails.getLoginId().toLowerCase());
         userDetailsDetails.setPassword(encode(userDetailsDetails.getPassword()));
         userDetailsDetails.setStatus("ACTIVE");
 
