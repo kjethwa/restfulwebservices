@@ -45,7 +45,7 @@ public class AdminSessionService {
 
     @Transactional()
     public void startSession(Long sessionId) throws AdminException {
-        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
         } else if (SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
@@ -62,7 +62,7 @@ public class AdminSessionService {
 
     @Transactional()
     public TokenInfo getNextToken(Long sessionId) throws AdminException {
-        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
         }
@@ -99,7 +99,7 @@ public class AdminSessionService {
 
     @Transactional()
     public void finishSession(Long sessionId) {
-        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
 
         if (SessionStatus.FINISHED == sessionDetails.getStatus()) {
             return;
@@ -115,7 +115,7 @@ public class AdminSessionService {
 
     @Transactional()
     public void cancelSession(Long sessionId) {
-        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
 
         if (SessionStatus.CANCELLED == sessionDetails.getStatus()) {
             return;
@@ -144,7 +144,7 @@ public class AdminSessionService {
     }
 
     public TokenInfo getLastToken(Long sessionId) {
-        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (SessionStatus.INPROGRESS != sessionDetails.getStatus()) {
             throw new AdminException("Session not yet started.");
         }
@@ -176,7 +176,7 @@ public class AdminSessionService {
         AdminSummary adminSummary = new AdminSummary();
 
         List<AdminSessionSummary> adminSessionSummaries = sessionDetailsList.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
-        Client client = clientRepository.findOne(clientId);
+        Client client = clientRepository.findById(clientId).get();
         adminSummary.setClientName(client.getClientName());
         adminSummary.setClientId(clientId);
         adminSessionSummaries.sort(new DateAndFromTimeComparatorImp());
@@ -197,7 +197,7 @@ public class AdminSessionService {
         adminSessionSummary.setToTime(sessionDetails.getToTime());
         adminSessionSummary.setStatus(sessionDetails.getStatus());
 
-        ClientOperation clientOperation = clientOperationRepository.findOne(sessionDetails.getOperationId());
+        ClientOperation clientOperation = clientOperationRepository.findById(sessionDetails.getOperationId()).get();
         adminSessionSummary.setDay(clientOperation.getDay());
 
         return adminSessionSummary;

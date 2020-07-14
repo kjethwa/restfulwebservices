@@ -12,6 +12,6 @@ public class ClientOperationService {
     private ClientOperationRepository clientOperationRepository;
 
     public ClientOperation getClientOperation(Long operationId) {
-        return clientOperationRepository.findOne(operationId);
+        return clientOperationRepository.findById(operationId).get();
     }
 }

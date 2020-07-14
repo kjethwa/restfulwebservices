@@ -20,7 +20,7 @@ public class UserDetailsService {
     UserRoleRepository userRoleRepository;
 
     public UserDetails getUser(Long id){
-        return userDetailsRepository.findOne(id);
+        return userDetailsRepository.findById(id).get();
     }
 
     public UserDetails saveUserDetails(UserDetails userDetailsDetails) throws Exception {

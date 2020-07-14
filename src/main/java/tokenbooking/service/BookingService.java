@@ -46,7 +46,7 @@ public class BookingService {
                 throw new Exception("Invalid booking reguest");
             }
 
-            SessionDetails sessionDetails = sessionDetailsRepository.findOne(bookingDetails.getSessionId());
+            SessionDetails sessionDetails = sessionDetailsRepository.findById(bookingDetails.getSessionId()).get();
             bookingDetails.setTokenNumber(sessionDetails.getNextAvailableToken());
 
             //Check if the token is already booked
@@ -74,7 +74,7 @@ public class BookingService {
     }
 
     public BookingSummary cancelBooking(Long bookingId) {
-        BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
+        BookingDetails bookingDetails = bookingRepository.findById(bookingId).get();
         bookingDetails.setStatus(BookingStatus.CANCELLED);
         bookingDetails.setCancelledDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
@@ -83,7 +83,7 @@ public class BookingService {
     }
 
     public BookingSummary submitBooking(Long bookingId) {
-        BookingDetails bookingDetails = bookingRepository.findOne(bookingId);
+        BookingDetails bookingDetails = bookingRepository.findById(bookingId).get();
         bookingDetails.setStatus(BookingStatus.SUBMITTED);
         bookingDetails.setSubmittedDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
@@ -104,7 +104,7 @@ public class BookingService {
     private BookingSummary getBookingSummary(BookingDetails bookingDetails) {
         BookingSummary bookingSummary = new BookingSummary();
         SessionDetails sessionDetails = sessionDetailsRepository.getOne(bookingDetails.getSessionId());
-        Client client = clientRepository.findOne(sessionDetails.getClientId());
+        Client client = clientRepository.findById(sessionDetails.getClientId()).get();
 
         bookingSummary.setClientId(client.getClientId());
         bookingSummary.setClientName(client.getClientName());

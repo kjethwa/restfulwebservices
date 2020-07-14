@@ -50,11 +50,11 @@ public class SessionService {
     }
 
     public SessionDetails getSessionDetails(Long sessionId) {
-        return sessionDetailsRepository.findOne(sessionId);
+        return sessionDetailsRepository.findById(sessionId).get();
     }
 
     public synchronized Integer getNextAvailableToken(Long sessionId) throws Exception {
-        SessionDetails sessionDetails = sessionDetailsRepository.findOne(sessionId);
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (sessionDetails.getStatus() == SessionStatus.ACTIVE) {
             return START_TOKEN_NUMBER;
         }

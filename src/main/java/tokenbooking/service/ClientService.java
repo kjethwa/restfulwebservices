@@ -29,7 +29,7 @@ public class ClientService {
     }
 
     public Client getClientById(final Long clientId) {
-        return clientRepository.findOne(clientId);
+        return clientRepository.findById(clientId).get();
     }
 
     public void addClient(Client client) {
