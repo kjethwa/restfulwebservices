@@ -1,10 +1,6 @@
 package tokenbooking.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
-import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -25,12 +21,10 @@ public class SessionDetails {
     private Integer nextAvailableToken;
     private Integer noOfTokens;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
+    @Basic
     private LocalTime fromTime;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
+    @Basic
     private LocalTime toTime;
 
     @Enumerated(EnumType.STRING)

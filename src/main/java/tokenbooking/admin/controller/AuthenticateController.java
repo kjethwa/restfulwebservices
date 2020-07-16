@@ -43,6 +43,11 @@ public class AuthenticateController {
     @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<AuthenticationResponse> authenticate(HttpServletRequest request, HttpServletResponse response, @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
+            UserDetails userDetails = userDetailsRepository.findByLoginId(authenticationRequest.getUsername());
+            if (userDetails == null) {
+                LOG.debug("User with userId {} does not exist", authenticationRequest.getUsername());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationResponse(null, "User with " + authenticationRequest.getUsername() + " loginid does not exist"));
+            }
             authenticationRequest.setUsername(authenticationRequest.getUsername().toLowerCase());
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {

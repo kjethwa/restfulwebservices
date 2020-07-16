@@ -1,10 +1,5 @@
 package tokenbooking.admin.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
-import tokenbooking.jsoncustomparser.LocalTimeSerializer;
-
 import java.time.LocalTime;
 
 public class TokenInfo {
@@ -12,12 +7,8 @@ public class TokenInfo {
     String userName;
     Long bookingId;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
     private LocalTime fromTime;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
     private LocalTime toTime;
 
     boolean hasMoreTokens;

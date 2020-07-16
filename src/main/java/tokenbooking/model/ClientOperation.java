@@ -1,12 +1,6 @@
 package tokenbooking.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
-import tokenbooking.jsoncustomparser.LocalTimeSerializer;
-
 import javax.persistence.*;
-import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
@@ -19,12 +13,10 @@ public class ClientOperation {
     private DayOfWeek day;
     private Integer noOfTokens;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
+    @Basic
     private LocalTime fromTime;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
+    @Basic
     private LocalTime toTime;
 
     public Long getOperationId() {

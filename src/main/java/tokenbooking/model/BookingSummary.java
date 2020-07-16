@@ -1,11 +1,7 @@
 package tokenbooking.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import tokenbooking.admin.comparator.DateAndFromTimeComparator;
-import tokenbooking.jsoncustomparser.LocalTimeDeserializer;
-import tokenbooking.jsoncustomparser.LocalTimeSerializer;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -22,12 +18,8 @@ public class BookingSummary implements DateAndFromTimeComparator {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
     private LocalTime fromTime;
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    @JsonSerialize(using = LocalTimeSerializer.class)
     private LocalTime toTime;
 
     private Integer tokenNumber;
