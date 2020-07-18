@@ -39,6 +39,7 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*.ico").permitAll()
                 .antMatchers("/*.png").permitAll()
                 .antMatchers("/auth/*").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/enduserapi/**").hasAnyRole("USER","SUPER_ADMIN")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
                 .antMatchers("/base/client/**").hasAnyRole("USER","SUPER_ADMIN")
@@ -48,6 +49,7 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.headers().frameOptions().disable();
     }
 /*
     @Override
