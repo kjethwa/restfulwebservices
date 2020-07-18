@@ -29,7 +29,7 @@ public class Client {
     private String latitude;
     private String longitude;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "client", cascade = {CascadeType.ALL})
     private List<ClientOperation> daysOfOperation;
 
     public String getOwnerFirstName() {

@@ -19,6 +19,10 @@ public class ClientOperation {
     @Basic
     private LocalTime toTime;
 
+    @ManyToOne
+    private Client client;
+
+
     public Long getOperationId() {
         return operationId;
     }
@@ -57,5 +61,13 @@ public class ClientOperation {
 
     public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }
