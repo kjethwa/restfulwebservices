@@ -18,8 +18,10 @@ public class BookingSummary implements DateAndFromTimeComparator {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
 
+    @JsonFormat(pattern = "KK:mm a")
     private LocalTime fromTime;
 
+    @JsonFormat(pattern = "KK:mm a")
     private LocalTime toTime;
 
     private Integer tokenNumber;

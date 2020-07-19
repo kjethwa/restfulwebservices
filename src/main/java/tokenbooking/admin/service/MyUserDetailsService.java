@@ -27,12 +27,14 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         tokenbooking.model.UserDetails userDetailsDB = userDetailsRepository.findByLoginId(userName);
+        UserDetails userDetails = null;
+        if (userDetailsDB != null) {
+            List<UserRole> userRoleList = findRolesByUserName.findByUserId(userDetailsDB.getUserId());
 
-        List<UserRole> userRoleList = findRolesByUserName.findByUserId(userDetailsDB.getUserId());
+            List<SimpleGrantedAuthority> roles = userRoleList.stream().map(userRole -> userRole.getRole().label).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
-        List<SimpleGrantedAuthority> roles = userRoleList.stream().map( userRole -> userRole.getRole().label).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-
-        UserDetails userDetails = new User(userDetailsDB.getLoginId(), userDetailsDB.getPassword(), roles);
+            userDetails = new User(userDetailsDB.getLoginId(), userDetailsDB.getPassword(), roles);
+        }
         return userDetails;
     }
 

@@ -15,8 +15,10 @@ public class UserSessionSummary implements DateAndFromTimeComparator {
     private Integer nextAvailableToken;
     private Integer noOfTokens;
 
+    @JsonFormat(pattern = "KK:mm a")
     private LocalTime fromTime;
 
+    @JsonFormat(pattern = "KK:mm a")
     private LocalTime toTime;
 
     private boolean booked;

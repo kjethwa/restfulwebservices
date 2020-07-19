@@ -2,11 +2,12 @@ package tokenbooking.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import tokenbooking.admin.comparator.DateAndFromTimeComparatorImp;
 import tokenbooking.model.*;
 import tokenbooking.repository.*;
-import tokenbooking.utils.*;
+import tokenbooking.utils.HelperUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -82,8 +83,14 @@ public class BookingService {
         return getBookingSummary(bookingDetails);
     }
 
-    public BookingSummary submitBooking(Long bookingId) {
+    @Transactional
+    public BookingSummary submitBooking(Long bookingId) throws Exception {
         BookingDetails bookingDetails = bookingRepository.findById(bookingId).get();
+
+        if(!isSessionStarted(bookingDetails)) {
+            throw new Exception("Session not yet started");
+        }
+
         bookingDetails.setStatus(BookingStatus.SUBMITTED);
         bookingDetails.setSubmittedDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
@@ -119,6 +126,10 @@ public class BookingService {
     }
 
     private void validateBooking(BookingDetails bookingDetails, SessionDetails sessionDetails) throws Exception {
+        // Check is booking allowed in selected session
+        if (checkIsAlreadyBookedInCurrentDay(bookingDetails, sessionDetails)) {
+            throw new Exception("You can book or cancel only one token for a session");
+        }
         if (checkIsAlreadyBookedInSession(bookingDetails, sessionDetails)) {
             throw new Exception("Already booked a token in the session");
         }
@@ -126,11 +137,16 @@ public class BookingService {
             throw new Exception("Token is already booked. Kindly book another token.");
         }
         if (bookingDetails.getTokenNumber() < sessionDetails.getNextAvailableToken()) {
-            throw new Exception("In valid Token number. Kindly book again.");
+            throw new Exception("Invalid Token number. Kindly book again.");
         }
         if (sessionDetails.getAvailableToken() == ZERO) {
             throw new Exception("Booking is full for the current session.");
         }
+    }
+
+    private boolean checkIsAlreadyBookedInCurrentDay(BookingDetails bookingDetails, SessionDetails sessionDetails) {
+        Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), bookingDetails.getUserId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED,BookingStatus.CANCELLED,BookingStatus.COMPLETED));
+        return bookingDetailList.size() > 0;
     }
 
     private boolean checkIsAlreadyBookedInSession(BookingDetails bookingDetails, SessionDetails sessionDetails) {
@@ -144,7 +160,7 @@ public class BookingService {
         bookingRepository.save(bookingDetails);
     }
 
-    private void updateBookingDetailsInSession(SessionDetails sessionDetails) {
+    private synchronized void updateBookingDetailsInSession(SessionDetails sessionDetails) {
         sessionDetails.setAvailableToken(sessionDetails.getAvailableToken() - 1);
         if (sessionDetails.getAvailableToken() == 0)
             sessionDetails.setNextAvailableToken(-1);
@@ -153,4 +169,12 @@ public class BookingService {
 
         sessionDetailsRepository.save(sessionDetails);
     }
+
+    private boolean isSessionStarted(BookingDetails bookingDetails) {
+        Long sessionId = bookingDetails.getSessionId();
+
+        SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
+        return sessionDetails != null && sessionDetails.getStatus() == SessionStatus.INPROGRESS;
+    }
+
 }
