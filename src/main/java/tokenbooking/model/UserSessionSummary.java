@@ -5,10 +5,11 @@ import tokenbooking.admin.comparator.DateAndFromTimeComparator;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public class UserSessionSummary implements DateAndFromTimeComparator {
 
-    private Long sessionId;
+    private UUID sessionId;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
     private Integer availableToken;
@@ -41,11 +42,11 @@ public class UserSessionSummary implements DateAndFromTimeComparator {
         this.tokenNumber = tokenNumber;
     }
 
-    public Long getSessionId() {
+    public UUID getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(UUID sessionId) {
         this.sessionId = sessionId;
     }
 

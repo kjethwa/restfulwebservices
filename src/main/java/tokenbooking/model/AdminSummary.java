@@ -1,17 +1,18 @@
 package tokenbooking.model;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AdminSummary {
-    private Long clientId;
+    private UUID clientId;
     private String clientName;
     private List<AdminSessionSummary> adminSessionSummaryList;
 
-    public Long getClientId() {
+    public UUID getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 

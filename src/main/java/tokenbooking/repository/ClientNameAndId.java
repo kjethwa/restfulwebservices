@@ -1,7 +1,9 @@
 package tokenbooking.repository;
 
+import java.util.UUID;
+
 public interface ClientNameAndId {
-    Long getClientId();
+    UUID getClientId();
 
     String getClientName();
 }

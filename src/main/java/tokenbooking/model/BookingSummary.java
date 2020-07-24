@@ -7,13 +7,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public class BookingSummary implements DateAndFromTimeComparator {
 
-    private Long clientId;
+    private UUID clientId;
     private String clientName;
-    private Long sessionId;
-    private Long bookingId;
+    private UUID sessionId;
+    private UUID bookingId;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
@@ -29,11 +30,11 @@ public class BookingSummary implements DateAndFromTimeComparator {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
-    public Long getClientId() {
+    public UUID getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 
@@ -45,11 +46,11 @@ public class BookingSummary implements DateAndFromTimeComparator {
         this.clientName = clientName;
     }
 
-    public Long getSessionId() {
+    public UUID getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(UUID sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -93,11 +94,11 @@ public class BookingSummary implements DateAndFromTimeComparator {
         this.status = status;
     }
 
-    public Long getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(Long bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 }

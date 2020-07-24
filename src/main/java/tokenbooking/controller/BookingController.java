@@ -13,6 +13,7 @@ import tokenbooking.service.BookingService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class BookingController {
@@ -44,7 +45,7 @@ public class BookingController {
 
     @CrossOrigin(origins = "http://localhost:4201")
     @RequestMapping(value = "/enduserapi/cancelBooking/{bookingId}", method = RequestMethod.PUT)
-    public ResponseMessage cancelBooking(@PathVariable Long bookingId) {
+    public ResponseMessage cancelBooking(@PathVariable UUID bookingId) {
         try {
             BookingSummary bookingSummary = bookingService.cancelBooking(bookingId);
             return new ResponseMessage(bookingSummary, ResponseStatus.SUCCESS);
@@ -55,7 +56,7 @@ public class BookingController {
 
     @CrossOrigin(origins = "http://localhost:4201")
     @RequestMapping(value = "/enduserapi/submitBooking/{bookingId}", method = RequestMethod.PUT)
-    public ResponseMessage submitBooking(@PathVariable Long bookingId) {
+    public ResponseMessage submitBooking(@PathVariable UUID bookingId) {
         try {
             BookingSummary bookingSummary = bookingService.submitBooking(bookingId);
             return new ResponseMessage(bookingSummary, ResponseStatus.SUCCESS);

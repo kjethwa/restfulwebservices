@@ -1,8 +1,10 @@
 package tokenbooking.model;
 
+import java.util.UUID;
+
 public class ClientSearchDetails {
 
-    private Long clientId;
+    private UUID clientId;
     private String clientName;
     private String ownerFirstName;
     private String ownerLastName;
@@ -11,7 +13,7 @@ public class ClientSearchDetails {
     private String state;
     private String city;
 
-    public ClientSearchDetails(Long clientId,String clientCategory, String clientName, String ownerFirstName, String ownerLastName, String city, String state, String status) {
+    public ClientSearchDetails(UUID clientId,String clientCategory, String clientName, String ownerFirstName, String ownerLastName, String city, String state, String status) {
         this.clientId = clientId;
         this.clientCategory = clientCategory;
         this.clientName = clientName;
@@ -22,11 +24,11 @@ public class ClientSearchDetails {
         this.status = status;
     }
 
-    public Long getClientId() {
+    public UUID getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 

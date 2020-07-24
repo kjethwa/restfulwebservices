@@ -9,20 +9,21 @@ import tokenbooking.model.BookingStatus;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
-public interface BookingRepository extends JpaRepository<BookingDetails, Long> {
+public interface BookingRepository extends JpaRepository<BookingDetails, UUID> {
 
-    Collection<BookingDetails> findBySessionIdAndUserIdAndStatusIn(Long sessionId, Long userId, List<BookingStatus> status);
+    Collection<BookingDetails> findBySessionIdAndUserIdAndStatusIn(UUID sessionId, UUID userId, List<BookingStatus> status);
 
-    Collection<BookingDetails> findByUserId(Long userId);
+    Collection<BookingDetails> findByUserId(UUID userId);
 
-    BookingDetails findFirstBySessionIdAndSequenceNumberNotNullOrderBySequenceNumberDesc(Long sessionId);
+    BookingDetails findFirstBySessionIdAndSequenceNumberNotNullOrderBySequenceNumberDesc(UUID sessionId);
 
-    BookingDetails findFirstBySessionIdAndStatusOrderByTokenNumberAsc(Long sessionId, BookingStatus status);
+    BookingDetails findFirstBySessionIdAndStatusOrderByTokenNumberAsc(UUID sessionId, BookingStatus status);
 
-    Long countBySessionIdAndStatus(Long sessionId,BookingStatus status);
+    Long countBySessionIdAndStatus(UUID sessionId,BookingStatus status);
 
     @Modifying
     @Query("update BookingDetails bd set bd.status= :statusToSet where bd.sessionId = :sessionId and bd.status in :statusIn")
-    void updateBookingStatusOfSessionId(@Param("statusToSet") BookingStatus statusToSet, @Param("sessionId") Long sessionId, @Param("statusIn") List<BookingStatus> statusIn);
+    void updateBookingStatusOfSessionId(@Param("statusToSet") BookingStatus statusToSet, @Param("sessionId") UUID sessionId, @Param("statusIn") List<BookingStatus> statusIn);
 }

@@ -12,6 +12,7 @@ import tokenbooking.model.UserDetails;
 import tokenbooking.service.UserDetailsService;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,7 +25,7 @@ public class UserController {
 
     @GetMapping("/user/{userId}")
     @CrossOrigin(origins = "http://localhost:4201")
-    public UserDetails getUser(@PathVariable Long userId) {
+    public UserDetails getUser(@PathVariable UUID userId) {
         return userDetailsService.getUser(userId);
     }
 

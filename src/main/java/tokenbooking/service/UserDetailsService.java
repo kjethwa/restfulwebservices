@@ -10,6 +10,8 @@ import tokenbooking.model.UserRoleEnum;
 import tokenbooking.repository.UserDetailsRepository;
 import tokenbooking.repository.UserRoleRepository;
 
+import java.util.UUID;
+
 @Service
 public class UserDetailsService {
 
@@ -19,7 +21,7 @@ public class UserDetailsService {
     @Autowired
     UserRoleRepository userRoleRepository;
 
-    public UserDetails getUser(Long id){
+    public UserDetails getUser(UUID id){
         return userDetailsRepository.findById(id).get();
     }
 

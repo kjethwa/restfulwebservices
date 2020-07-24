@@ -46,7 +46,7 @@ public class SessionsJob {
         Iterator<ClientNameAndId> iterator = clientNameAndIds.iterator();
         while(iterator.hasNext()) {
             ClientNameAndId clientNameAndId = iterator.next();
-            Long clientId = clientNameAndId.getClientId();
+            UUID clientId = clientNameAndId.getClientId();
             Integer createdSessionCount = 0 ;
             List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetween(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate()));
             Client client = clientService.getClientById(clientId);
@@ -72,11 +72,11 @@ public class SessionsJob {
             LocalDate nextDate = HelperUtil.getCurrentDate();
             for (int i = 0; i <= MAX_DAYS_OF_SESSION; i++) {
                 if (mapOfDaysOfOperation.get(nextDate.getDayOfWeek()) != null) {
-                    Set<Long> presentOperationIds = new HashSet<>();
+                    Set<UUID> presentOperationIds = new HashSet<>();
                     if (mapOfSessions.get(nextDate) != null)
                         presentOperationIds = mapOfSessions.get(nextDate).stream().map(SessionDetails::getOperationId).collect(Collectors.toSet());
 
-                    Set<Long> finalPresentOperationIds = presentOperationIds;
+                    Set<UUID> finalPresentOperationIds = presentOperationIds;
                     List<ClientOperation> clientOperationsToBeCreated = mapOfDaysOfOperation.get(nextDate.getDayOfWeek()).stream().filter(s -> !finalPresentOperationIds.contains(s.getOperationId())).collect(Collectors.toList());
 
                     createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId);
@@ -113,7 +113,7 @@ public class SessionsJob {
         LOG.info("Finished cancel or complete old sessions job");
     }
 
-    private void createSession(List<SessionDetails> allAvailableSessions, LocalDate nextDate, List<ClientOperation> clientOperations, Long clientId) {
+    private void createSession(List<SessionDetails> allAvailableSessions, LocalDate nextDate, List<ClientOperation> clientOperations, UUID clientId) {
         for (ClientOperation clientOperation : clientOperations) {
             SessionDetails sessionDetails = new SessionDetails();
             sessionDetails.setClientId(clientId);

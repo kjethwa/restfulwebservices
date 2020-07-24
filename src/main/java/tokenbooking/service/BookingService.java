@@ -10,10 +10,7 @@ import tokenbooking.repository.*;
 import tokenbooking.utils.HelperUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static tokenbooking.model.Constants.*;
 
@@ -74,7 +71,7 @@ public class BookingService {
         return bookingSummaryList;
     }
 
-    public BookingSummary cancelBooking(Long bookingId) {
+    public BookingSummary cancelBooking(UUID bookingId) {
         BookingDetails bookingDetails = bookingRepository.findById(bookingId).get();
         bookingDetails.setStatus(BookingStatus.CANCELLED);
         bookingDetails.setCancelledDate(LocalDateTime.now());
@@ -84,7 +81,7 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingSummary submitBooking(Long bookingId) throws Exception {
+    public BookingSummary submitBooking(UUID bookingId) throws Exception {
         BookingDetails bookingDetails = bookingRepository.findById(bookingId).get();
 
         if(!isSessionStarted(bookingDetails)) {
@@ -98,12 +95,12 @@ public class BookingService {
         return getBookingSummary(bookingDetails);
     }
 
-    public BookingDetails getBookingOfLastSequenceNumber(Long sessionId) {
+    public BookingDetails getBookingOfLastSequenceNumber(UUID sessionId) {
         BookingDetails bookingDetails = bookingRepository.findFirstBySessionIdAndSequenceNumberNotNullOrderBySequenceNumberDesc(sessionId);
         return bookingDetails;
     }
 
-    public BookingDetails getSubmittedBookingOfLeastTokenNumber(Long sessionId) {
+    public BookingDetails getSubmittedBookingOfLeastTokenNumber(UUID sessionId) {
         BookingDetails bookingDetails = bookingRepository.findFirstBySessionIdAndStatusOrderByTokenNumberAsc(sessionId, BookingStatus.SUBMITTED);
         return bookingDetails;
     }
@@ -171,7 +168,7 @@ public class BookingService {
     }
 
     private boolean isSessionStarted(BookingDetails bookingDetails) {
-        Long sessionId = bookingDetails.getSessionId();
+        UUID sessionId = bookingDetails.getSessionId();
 
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         return sessionDetails != null && sessionDetails.getStatus() == SessionStatus.INPROGRESS;

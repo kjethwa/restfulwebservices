@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static tokenbooking.model.Constants.*;
@@ -45,7 +46,7 @@ public class AdminSessionService {
     ClientRepository clientRepository;
 
     @Transactional()
-    public void startSession(Long sessionId) throws AdminException {
+    public void startSession(UUID sessionId) throws AdminException {
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
@@ -65,7 +66,7 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public TokenInfo getNextToken(Long sessionId) throws AdminException {
+    public TokenInfo getNextToken(UUID sessionId) throws AdminException {
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
@@ -94,7 +95,7 @@ public class AdminSessionService {
     @Transactional()
     public AdminSummary getAllSessionDetails(String loginId) {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
-        Long clientId = userDetails.getClientId();
+        UUID clientId = userDetails.getClientId();
         LOG.debug("Getting all session details of clientId {}", clientId);
         List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetweenAndStatusIn(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate(), Arrays.asList(SessionStatus.ACTIVE, SessionStatus.INPROGRESS)));
         LOG.debug("Number of sessions found = {} ", allAvailableSessions.size());
@@ -102,7 +103,7 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public void finishSession(Long sessionId) {
+    public void finishSession(UUID sessionId) {
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
 
         if (SessionStatus.FINISHED == sessionDetails.getStatus()) {
@@ -118,7 +119,7 @@ public class AdminSessionService {
     }
 
     @Transactional()
-    public void cancelSession(Long sessionId) {
+    public void cancelSession(UUID sessionId) {
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
 
         if (SessionStatus.CANCELLED == sessionDetails.getStatus()) {
@@ -136,7 +137,7 @@ public class AdminSessionService {
     @Transactional()
     public AdminSummary getActiveSession(String loginId) {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
-        Long clientId = userDetails.getClientId();
+        UUID clientId = userDetails.getClientId();
 
         List<SessionDetails> sessionDetails = (List<SessionDetails>) sessionDetailsRepository.findByClientIdAndStatusIn(clientId, Arrays.asList(SessionStatus.INPROGRESS));
 
@@ -147,7 +148,7 @@ public class AdminSessionService {
         }
     }
 
-    public TokenInfo getLastToken(Long sessionId) {
+    public TokenInfo getLastToken(UUID sessionId) {
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (SessionStatus.INPROGRESS != sessionDetails.getStatus()) {
             throw new AdminException("Session not yet started.");
@@ -176,7 +177,7 @@ public class AdminSessionService {
         return !result.isEmpty();
     }
 
-    private AdminSummary getAdminSummary(Long clientId, List<SessionDetails> sessionDetailsList) {
+    private AdminSummary getAdminSummary(UUID clientId, List<SessionDetails> sessionDetailsList) {
         AdminSummary adminSummary = new AdminSummary();
 
         List<AdminSessionSummary> adminSessionSummaries = sessionDetailsList.stream().map(this::getAdminSessionSummary).collect(Collectors.toList());
@@ -229,7 +230,7 @@ public class AdminSessionService {
         bookingRepository.save(nextBooking);
     }
 
-    private BookingDetails completePreviousToken(Long sessionId) {
+    private BookingDetails completePreviousToken(UUID sessionId) {
         BookingDetails bookingDetails = bookingService.getBookingOfLastSequenceNumber(sessionId);
 
         if (bookingDetails != null && BookingStatus.COMPLETED != bookingDetails.getStatus()) {

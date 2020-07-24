@@ -7,6 +7,7 @@ import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.service.ClientService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController("/mdmapi")
 public class ClientController {
@@ -22,7 +23,7 @@ public class ClientController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/clients/{clientId}", method = RequestMethod.GET)
-    public Client getClientById(@PathVariable Long clientId) {
+    public Client getClientById(@PathVariable UUID clientId) {
         return clientService.getClientById(clientId);
     }
 

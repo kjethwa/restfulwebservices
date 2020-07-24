@@ -32,7 +32,7 @@ public class SessionService {
     @Autowired
     UserDetailsRepository userDetailsRepository;
 
-    public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(Long clientId, String loginId) throws Exception {
+    public ClientAndSessionDetails getSessionDetailsOfClientWithClientNameAndAddressSummary(UUID clientId, String loginId) throws Exception {
         UserDetails userDetails = userDetailsRepository.findByLoginId(loginId);
         ClientAndSessionDetails clientAndSessionDetails = new ClientAndSessionDetails();
         clientAndSessionDetails.setClientIdNameAddress(clientService.getClientNameAndAddressSummary(clientId));
@@ -49,11 +49,11 @@ public class SessionService {
         return sessionDetailsRepository.save(sessionDetails);
     }
 
-    public SessionDetails getSessionDetails(Long sessionId) {
+    public SessionDetails getSessionDetails(UUID sessionId) {
         return sessionDetailsRepository.findById(sessionId).get();
     }
 
-    public synchronized Integer getNextAvailableToken(Long sessionId) throws Exception {
+    public synchronized Integer getNextAvailableToken(UUID sessionId) throws Exception {
         SessionDetails sessionDetails = sessionDetailsRepository.findById(sessionId).get();
         if (sessionDetails.getStatus() == SessionStatus.ACTIVE) {
             return START_TOKEN_NUMBER;
@@ -66,7 +66,7 @@ public class SessionService {
         return sessionDetails.getNextAvailableToken();
     }
 
-    private List<UserSessionSummary> createUserSessionSummaryAndValidate(List<SessionDetails> allAvailableSessions, Long userId) throws Exception {
+    private List<UserSessionSummary> createUserSessionSummaryAndValidate(List<SessionDetails> allAvailableSessions, UUID userId) throws Exception {
         Iterator<SessionDetails> iterator = allAvailableSessions.iterator();
         List<UserSessionSummary> userSessionSummaries = new ArrayList<>(allAvailableSessions.size());
         while (iterator.hasNext()) {
@@ -92,7 +92,7 @@ public class SessionService {
         return userSessionSummaries;
     }
 
-    private void checkIsAlreadyBookedInSession(SessionDetails sessionDetails, Long userId, UserSessionSummary userSessionSummary) throws Exception {
+    private void checkIsAlreadyBookedInSession(SessionDetails sessionDetails, UUID userId, UserSessionSummary userSessionSummary) throws Exception {
         Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), userId, Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
         if(bookingDetailList.size()>1){
             throw new Exception("Multiple booking found in a session by a user");

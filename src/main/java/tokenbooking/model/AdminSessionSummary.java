@@ -8,9 +8,10 @@ import javax.persistence.Enumerated;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public class AdminSessionSummary implements DateAndFromTimeComparator {
-    private Long sessionId;
+    private UUID sessionId;
     private Integer availableTokens;
     private Integer submittedTokens;
     private Integer bookedTokens;
@@ -31,11 +32,11 @@ public class AdminSessionSummary implements DateAndFromTimeComparator {
 
     public AdminSessionSummary() {}
 
-    public Long getSessionId() {
+    public UUID getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(UUID sessionId) {
         this.sessionId = sessionId;
     }
 

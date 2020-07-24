@@ -15,6 +15,7 @@ import tokenbooking.specification.ClientSpecificationsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +29,7 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public Client getClientById(final Long clientId) {
+    public Client getClientById(final UUID clientId) {
         return clientRepository.findById(clientId).get();
     }
 
@@ -57,7 +58,7 @@ public class ClientService {
         return new ArrayList<>(clientRepository.findByStatus(SessionStatus.ACTIVE.getValue()));
     }
 
-    public ClientIdNameAddress getClientNameAndAddressSummary(Long clientId) throws Exception {
+    public ClientIdNameAddress getClientNameAndAddressSummary(UUID clientId) throws Exception {
         List<ClientIdNameAddress> clientIdNameAddresses = new ArrayList<>(clientRepository.findByStatusAndClientId(SessionStatus.ACTIVE.getValue(), clientId));
         if (StringUtils.isEmpty(clientIdNameAddresses) || clientIdNameAddresses.size() != 1) {
             throw new Exception("Invalid Client Id");

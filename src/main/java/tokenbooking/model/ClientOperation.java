@@ -3,13 +3,14 @@ package tokenbooking.model;
 import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Entity
 public class ClientOperation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long operationId;
+    @GeneratedValue()
+    private UUID operationId;
     private DayOfWeek day;
     private Integer noOfTokens;
 
@@ -23,11 +24,11 @@ public class ClientOperation {
     private Client client;
 
 
-    public Long getOperationId() {
+    public UUID getOperationId() {
         return operationId;
     }
 
-    public void setOperationId(Long operationId) {
+    public void setOperationId(UUID operationId) {
         this.operationId = operationId;
     }
 

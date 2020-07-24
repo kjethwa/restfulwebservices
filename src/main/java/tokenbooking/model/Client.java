@@ -3,13 +3,14 @@ package tokenbooking.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long clientId;
+    @GeneratedValue()
+    private UUID clientId;
     private String clientName;
     private String ownerFirstName;
     private String ownerLastName;
@@ -168,11 +169,11 @@ public class Client {
         this.longitude = longitude;
     }
 
-    public Long getClientId() {
+    public UUID getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 

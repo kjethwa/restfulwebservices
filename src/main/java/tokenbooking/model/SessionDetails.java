@@ -6,17 +6,18 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class SessionDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long sessionId;
+    @GeneratedValue()
+    private UUID sessionId;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate date;
-    private Long clientId;
-    private Long operationId;
+    private UUID clientId;
+    private UUID operationId;
     private Integer availableToken;
     private Integer nextAvailableToken;
     private Integer noOfTokens;
@@ -43,11 +44,11 @@ public class SessionDetails {
         return Objects.hash(getSessionId());
     }
 
-    public Long getSessionId() {
+    public UUID getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(UUID sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -59,19 +60,19 @@ public class SessionDetails {
         this.date = date;
     }
 
-    public Long getClientId() {
+    public UUID getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(UUID clientId) {
         this.clientId = clientId;
     }
 
-    public Long getOperationId() {
+    public UUID getOperationId() {
         return operationId;
     }
 
-    public void setOperationId(Long operationId) {
+    public void setOperationId(UUID operationId) {
         this.operationId = operationId;
     }
 

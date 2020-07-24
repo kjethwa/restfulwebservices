@@ -1,11 +1,12 @@
 package tokenbooking.admin.model;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 public class TokenInfo {
     Integer tokenNumber;
     String userName;
-    Long bookingId;
+    UUID bookingId;
 
     private LocalTime fromTime;
 
@@ -13,7 +14,7 @@ public class TokenInfo {
 
     boolean hasMoreTokens;
 
-    public TokenInfo(Integer tokenNumber, String userName, Long bookingId) {
+    public TokenInfo(Integer tokenNumber, String userName, UUID bookingId) {
         this.tokenNumber = tokenNumber;
         this.userName = userName;
         this.bookingId = bookingId;
@@ -39,11 +40,11 @@ public class TokenInfo {
         this.userName = userName;
     }
 
-    public Long getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(Long bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 

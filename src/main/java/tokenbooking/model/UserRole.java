@@ -1,32 +1,33 @@
 package tokenbooking.model;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 public class UserRole {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue()
+    private UUID id;
 
-    private Long userId;
+    private UUID userId;
 
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

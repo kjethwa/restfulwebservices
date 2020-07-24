@@ -11,6 +11,7 @@ import tokenbooking.service.SessionService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController()
 public class SessionController {
@@ -29,7 +30,7 @@ public class SessionController {
 
     @CrossOrigin(origins = "http://localhost:4201")
     @RequestMapping(value = "/enduserapi/clients/{clientId}/sessions", method = RequestMethod.GET)
-    public ClientAndSessionDetails getAllActiveSessionsOfClient(@PathVariable Long clientId, Principal principal) {
+    public ClientAndSessionDetails getAllActiveSessionsOfClient(@PathVariable UUID clientId, Principal principal) {
         try {
             if (StringUtils.isEmpty(principal)) {
                 throw new Exception("Invalid request");
@@ -43,7 +44,7 @@ public class SessionController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/enduserapi/sessions/{sessionId}/nextAvailableToken", method = RequestMethod.GET)
-    public Integer getNextAvailableToken(@PathVariable Long sessionId) {
+    public Integer getNextAvailableToken(@PathVariable UUID sessionId) {
         try {
             return sessionService.getNextAvailableToken(sessionId);
         } catch (Exception e) {
@@ -61,7 +62,7 @@ public class SessionController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/sessions/{sessionId}", method = RequestMethod.GET)
-    public SessionDetails getSession(@PathVariable Long sessionId) {
+    public SessionDetails getSession(@PathVariable UUID sessionId) {
         return sessionService.getSessionDetails(sessionId);
     }
 }

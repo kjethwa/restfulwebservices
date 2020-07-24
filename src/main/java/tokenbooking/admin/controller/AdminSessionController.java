@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import tokenbooking.model.AdminSummary;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4201", maxAge = 3600)
@@ -19,7 +20,7 @@ public class AdminSessionController {
     AdminSessionService adminSessionService;
 
     @GetMapping(value = "/admin/startsession/{sessionId}")
-    public ResponseMessage startSession(@PathVariable Long sessionId) {
+    public ResponseMessage startSession(@PathVariable UUID sessionId) {
         try {
             adminSessionService.startSession(sessionId);
             return new ResponseMessage("Session started successfully", ResponseStatus.SUCCESS);
@@ -55,7 +56,7 @@ public class AdminSessionController {
 
 
     @GetMapping(value = "/admin/nexttoken/{sessionId}")
-    public ResponseMessage nextToken(@PathVariable Long sessionId) {
+    public ResponseMessage nextToken(@PathVariable UUID sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
@@ -65,7 +66,7 @@ public class AdminSessionController {
     }
 
     @GetMapping(value = "/admin/lasttoken/{sessionId}")
-    public ResponseMessage lastToken(@PathVariable Long sessionId) {
+    public ResponseMessage lastToken(@PathVariable UUID sessionId) {
         try {
             TokenInfo tokenInfo = adminSessionService.getLastToken(sessionId);
             if (tokenInfo == null) {
@@ -78,7 +79,7 @@ public class AdminSessionController {
     }
 
     @GetMapping(value = "/admin/finishsession/{sessionId}")
-    public ResponseMessage finishSession(@PathVariable Long sessionId) {
+    public ResponseMessage finishSession(@PathVariable UUID sessionId) {
         try {
             adminSessionService.finishSession(sessionId);
             return new ResponseMessage("Session completed successfully.", ResponseStatus.SUCCESS);
@@ -88,7 +89,7 @@ public class AdminSessionController {
     }
 
     @GetMapping(value = "/admin/cancelsession/{sessionId}")
-    public ResponseMessage cancelSession(@PathVariable Long sessionId) {
+    public ResponseMessage cancelSession(@PathVariable UUID sessionId) {
         try {
             adminSessionService.cancelSession(sessionId);
             return new ResponseMessage("Session cancelled successfully.", ResponseStatus.SUCCESS);

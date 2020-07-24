@@ -4,16 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 public class BookingDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long bookingId;
+    @GeneratedValue()
+    private UUID bookingId;
 
-    private Long sessionId;
-    private Long userId;
+    private UUID sessionId;
+    private UUID userId;
     private Integer tokenNumber;
 
     @Enumerated(EnumType.STRING)
@@ -29,27 +30,27 @@ public class BookingDetails {
     private LocalDateTime cancelledDate;
 
 
-    public Long getBookingId() {
+    public UUID getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(Long bookingId) {
+    public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
     }
 
-    public Long getSessionId() {
+    public UUID getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(UUID sessionId) {
         this.sessionId = sessionId;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
