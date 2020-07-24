@@ -13,6 +13,7 @@ import tokenbooking.model.*;
 import tokenbooking.repository.*;
 import tokenbooking.service.BookingService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,10 +51,13 @@ public class AdminSessionService {
             throw new AdminException("Session not found " + sessionId);
         } else if (SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
             throw new AdminException("Session already started");
-        } else if (isClientHasOtherSessionInProgress(sessionDetails)) {
+        } else if (sessionDetails.getDate().isAfter(HelperUtil.getCurrentDate())) {
+            throw new AdminException("Can not start future dated session");
+        }
+        /*else if (isClientHasOtherSessionInProgress(sessionDetails)) {
             LOG.info("Can not start session other session is already in progress with session id {}", sessionId);
             throw new AdminException("Can not start session other session is already in progress.");
-        }
+        }*/
 
         sessionDetails.setStatus(SessionStatus.INPROGRESS);
         sessionDetailsRepository.save(sessionDetails);

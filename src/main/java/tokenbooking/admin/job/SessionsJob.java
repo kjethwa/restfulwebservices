@@ -38,7 +38,7 @@ public class SessionsJob {
 
     private static Logger LOG = LoggerFactory.getLogger(SessionsJob.class);
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 10/60 * * * *")
     @Transactional()
     public void checkAllSessionIsPresentOrCreate() {
         LOG.info("Starting cron job");
