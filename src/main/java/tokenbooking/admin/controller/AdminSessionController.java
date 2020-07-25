@@ -25,7 +25,7 @@ public class AdminSessionController {
             adminSessionService.startSession(sessionId);
             return new ResponseMessage("Session started successfully", ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
@@ -38,7 +38,7 @@ public class AdminSessionController {
             AdminSummary adminSummary = adminSessionService.getAllSessionDetails(principal.getName());
             return new ResponseMessage(adminSummary, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
     @GetMapping(value = "/admin/sessions/today")
@@ -50,7 +50,7 @@ public class AdminSessionController {
             AdminSummary adminSummary = adminSessionService.getAllSessionDetails(principal.getName());
             return new ResponseMessage(adminSummary, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
@@ -61,7 +61,7 @@ public class AdminSessionController {
             TokenInfo tokenInfo = adminSessionService.getNextToken(sessionId);
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
@@ -74,7 +74,7 @@ public class AdminSessionController {
             }
             return new ResponseMessage(tokenInfo, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
@@ -84,7 +84,7 @@ public class AdminSessionController {
             adminSessionService.finishSession(sessionId);
             return new ResponseMessage("Session completed successfully.", ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
@@ -94,7 +94,7 @@ public class AdminSessionController {
             adminSessionService.cancelSession(sessionId);
             return new ResponseMessage("Session cancelled successfully.", ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 
@@ -107,7 +107,7 @@ public class AdminSessionController {
             AdminSummary adminSummary = adminSessionService.getActiveSession(principal.getName());
             return new ResponseMessage(adminSummary, ResponseStatus.SUCCESS);
         } catch (AdminException e) {
-            return new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE);
+            return new ResponseMessage(e.getMessage(), e.getMessage(), ResponseStatus.FAILURE);
         }
     }
 }

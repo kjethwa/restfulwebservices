@@ -37,7 +37,7 @@ public class UserController {
             return new ResponseEntity(new ResponseMessage("Registered successfully", ResponseStatus.SUCCESS), HttpStatus.OK);
         } catch (Exception e) {
             LOG.warn(e.toString());
-            return new ResponseEntity(new ResponseMessage(e.getMessage(), ResponseStatus.FAILURE), HttpStatus.OK);
+            return new ResponseEntity(new ResponseMessage(null,e.getMessage(), ResponseStatus.FAILURE), HttpStatus.OK);
         }
     }
 
