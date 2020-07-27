@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,23 +39,22 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*.map").permitAll()
                 .antMatchers("/*.ico").permitAll()
                 .antMatchers("/*.png").permitAll()
+                .antMatchers("/base/client/**").permitAll()
                 .antMatchers("/auth/*").permitAll()
                 .antMatchers("/enduserapi/**").hasAnyRole("USER","SUPER_ADMIN")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
-                .antMatchers("/base/client/**").hasAnyRole("USER","SUPER_ADMIN")
-                .antMatchers("/base/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
-/*
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/resources/static/**"); // #3
-    }*/
+    }
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {

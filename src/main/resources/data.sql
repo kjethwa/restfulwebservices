@@ -1,4 +1,6 @@
-insert into client(client_id,city,client_category,client_name,country,status) values ('64f2ab89-141d-4cd5-8bd7-f1fac3b18c00','Mumbai','CLINIC','Dr. Mehta','India','ACTIVE');
+insert into client_configuration_setting (id,no_of_tokens_per_quarter) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c35',4);
+
+insert into client(client_id,city,client_category,client_name,country,status,client_config_id) values ('64f2ab89-141d-4cd5-8bd7-f1fac3b18c00','Mumbai','CLINIC','Dr. Mehta','India','ACTIVE','64f2ab89-141d-4cd5-8bd7-f1fac3b18c35');
 
 insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c01',1,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c02',2,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
