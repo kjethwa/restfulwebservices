@@ -1,5 +1,7 @@
 package tokenbooking.admin.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -8,8 +10,10 @@ public class TokenInfo {
     String userName;
     UUID bookingId;
 
+    @JsonFormat(pattern = "KK:mm a")
     private LocalTime fromTime;
 
+    @JsonFormat(pattern = "KK:mm a")
     private LocalTime toTime;
 
     boolean hasMoreTokens;

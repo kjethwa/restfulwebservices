@@ -10,6 +10,7 @@ import tokenbooking.repository.*;
 import tokenbooking.utils.HelperUtil;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static tokenbooking.model.Constants.*;
@@ -47,9 +48,14 @@ public class BookingService {
             SessionDetails sessionDetails = sessionDetailsRepository.findById(bookingDetails.getSessionId()).get();
             bookingDetails.setTokenNumber(sessionDetails.getNextAvailableToken());
 
-            //Check if the token is already booked
+            // Check if the token is already booked
             validateBooking(bookingDetails, sessionDetails);
 
+            // set recommended time
+            Client client = clientRepository.findById(sessionDetails.getClientId()).get();
+            bookingDetails.setRecommendedTime(getRecommendedTime(bookingDetails, sessionDetails ,client.getClientConfigurationSetting()));
+
+            // Save bookings
             saveTokenDetails(bookingDetails);
 
             updateBookingDetailsInSession(sessionDetails);
@@ -118,6 +124,7 @@ public class BookingService {
         bookingSummary.setStatus(bookingDetails.getStatus());
         bookingSummary.setTokenNumber(bookingDetails.getTokenNumber());
         bookingSummary.setBookingId(bookingDetails.getBookingId());
+        bookingSummary.setRecommendedTime(bookingDetails.getRecommendedTime());
 
         return bookingSummary;
     }
@@ -143,18 +150,25 @@ public class BookingService {
 
     private boolean checkIsAlreadyBookedInCurrentDay(BookingDetails bookingDetails, SessionDetails sessionDetails) {
         Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), bookingDetails.getUserId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED,BookingStatus.CANCELLED,BookingStatus.COMPLETED));
-        return bookingDetailList.size() > 0;
+        return !bookingDetailList.isEmpty();
     }
 
     private boolean checkIsAlreadyBookedInSession(BookingDetails bookingDetails, SessionDetails sessionDetails) {
         Collection<BookingDetails> bookingDetailList = bookingRepository.findBySessionIdAndUserIdAndStatusIn(sessionDetails.getSessionId(), bookingDetails.getUserId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
-        return bookingDetailList.size() > 0;
+        return !bookingDetailList.isEmpty();
     }
 
     private void saveTokenDetails(BookingDetails bookingDetails) {
         bookingDetails.setStatus(BookingStatus.BOOKED);
         bookingDetails.setCreatedDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
+    }
+
+    private LocalTime getRecommendedTime(BookingDetails bookingDetails, SessionDetails sessionDetails, ClientConfigurationSetting clientConfigurationSetting) {
+        LocalTime startTime = sessionDetails.getFromTime();
+        Integer noOfTokensInQuarter = clientConfigurationSetting.getNoOfTokensPerQuarter();
+        LocalTime recommendedTime = startTime.plusMinutes(((bookingDetails.getTokenNumber() / noOfTokensInQuarter) * QUARTER_MINUTES));
+        return recommendedTime;
     }
 
     private synchronized void updateBookingDetailsInSession(SessionDetails sessionDetails) {

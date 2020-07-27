@@ -14,6 +14,7 @@ import tokenbooking.repository.*;
 import tokenbooking.service.BookingService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -235,6 +236,7 @@ public class AdminSessionService {
 
         if (bookingDetails != null && BookingStatus.COMPLETED != bookingDetails.getStatus()) {
             bookingDetails.setStatus(BookingStatus.COMPLETED);
+            bookingDetails.setCompletedDate(LocalDateTime.now());
             bookingRepository.save(bookingDetails);
         }
 

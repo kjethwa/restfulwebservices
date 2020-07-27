@@ -30,6 +30,9 @@ public class BookingSummary implements DateAndFromTimeComparator {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
+    @JsonFormat(pattern = "KK:mm a")
+    private LocalTime recommendedTime;
+
     public UUID getClientId() {
         return clientId;
     }
@@ -100,5 +103,13 @@ public class BookingSummary implements DateAndFromTimeComparator {
 
     public void setBookingId(UUID bookingId) {
         this.bookingId = bookingId;
+    }
+
+    public LocalTime getRecommendedTime() {
+        return recommendedTime;
+    }
+
+    public void setRecommendedTime(LocalTime recommendedTime) {
+        this.recommendedTime = recommendedTime;
     }
 }

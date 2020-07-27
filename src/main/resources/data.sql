@@ -1,36 +1,36 @@
 insert into client(client_id,city,client_category,client_name,country,status) values ('64f2ab89-141d-4cd5-8bd7-f1fac3b18c00','Mumbai','CLINIC','Dr. Mehta','India','ACTIVE');
 
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c01',1,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c02',2,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c03',3,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c04',4,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c05',5,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c06',6,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c07',0,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c01',1,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c02',2,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c03',3,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c04',4,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c05',5,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c06',6,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c07',0,'10:00',2,'11:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c08',1,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c09',2,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c10',3,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c11',4,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c12',5,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c13',6,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c14',0,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c08',1,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c09',2,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c10',3,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c11',4,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c12',5,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c13',6,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c14',0,'11:00',1,'11:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c15',1,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c16',2,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c17',3,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c18',4,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c19',5,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c20',6,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c21',0,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c15',1,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c16',2,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c17',3,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c18',4,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c19',5,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c20',6,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c21',0,'21:00',2,'22:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c22',1,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c23',2,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c24',3,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c25',4,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c26',5,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c27',6,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
-insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c28',0,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c22',1,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c23',2,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c24',3,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c25',4,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c26',5,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c27',6,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c28',0,'22:00',1,'23:00','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 
 
 insert into user_details(user_id,full_name,login_id,password,phone_number,status,client_id) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c29','Kalpesh Jethwa','kalpeshjethwa92@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',9594267520,'ACTIVE','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');

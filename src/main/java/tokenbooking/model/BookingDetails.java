@@ -1,9 +1,10 @@
 package tokenbooking.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -22,13 +23,17 @@ public class BookingDetails {
 
     private Integer sequenceNumber;
 
-    @JsonIgnore
+    @Basic
     private LocalDateTime createdDate;
-    @JsonIgnore
+    @Basic
     private LocalDateTime submittedDate;
-    @JsonIgnore
+    @Basic
     private LocalDateTime cancelledDate;
-
+    @Basic
+    private LocalDateTime completedDate;
+    @Basic
+    @JsonFormat(pattern = "KK:mm a")
+    private LocalTime recommendedTime;
 
     public UUID getBookingId() {
         return bookingId;
@@ -100,5 +105,21 @@ public class BookingDetails {
 
     public void setSequenceNumber(Integer sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public LocalDateTime getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDateTime completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public LocalTime getRecommendedTime() {
+        return recommendedTime;
+    }
+
+    public void setRecommendedTime(LocalTime recommendedTime) {
+        this.recommendedTime = recommendedTime;
     }
 }

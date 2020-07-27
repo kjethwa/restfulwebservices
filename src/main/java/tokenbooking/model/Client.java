@@ -1,6 +1,5 @@
 package tokenbooking.model;
 
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +28,10 @@ public class Client {
     private String city;
     private String latitude;
     private String longitude;
+
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "client_config_id",referencedColumnName = "id")
+    private ClientConfigurationSetting clientConfigurationSetting;
 
     @OneToMany(mappedBy = "client", cascade = {CascadeType.ALL})
     private List<ClientOperation> daysOfOperation;
@@ -193,4 +196,11 @@ public class Client {
         this.daysOfOperation = daysOfOperation;
     }
 
+    public ClientConfigurationSetting getClientConfigurationSetting() {
+        return clientConfigurationSetting;
+    }
+
+    public void setClientConfigurationSetting(ClientConfigurationSetting clientConfigurationSetting) {
+        this.clientConfigurationSetting = clientConfigurationSetting;
+    }
 }

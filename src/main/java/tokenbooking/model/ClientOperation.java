@@ -21,6 +21,7 @@ public class ClientOperation {
     private LocalTime toTime;
 
     @ManyToOne
+    @JoinColumn(name = "client_id")
     private Client client;
 
 
