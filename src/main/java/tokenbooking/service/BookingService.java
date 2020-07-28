@@ -111,6 +111,11 @@ public class BookingService {
         return bookingDetails;
     }
 
+    public List<BookingDetails> getAllSubmittedBooking(UUID sessionId) {
+        List<BookingDetails> bookingDetailsList = bookingRepository.findAllBySessionIdAndStatusIn(sessionId, Arrays.asList(BookingStatus.SUBMITTED));
+        return bookingDetailsList;
+    }
+
     private BookingSummary getBookingSummary(BookingDetails bookingDetails) {
         BookingSummary bookingSummary = new BookingSummary();
         SessionDetails sessionDetails = sessionDetailsRepository.getOne(bookingDetails.getSessionId());

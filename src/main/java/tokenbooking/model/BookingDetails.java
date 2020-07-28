@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +35,19 @@ public class BookingDetails {
     @Basic
     @JsonFormat(pattern = "KK:mm a")
     private LocalTime recommendedTime;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookingDetails that = (BookingDetails) o;
+        return bookingId.equals(that.bookingId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bookingId);
+    }
 
     public UUID getBookingId() {
         return bookingId;

@@ -1,6 +1,7 @@
 package tokenbooking.admin.service;
 
 import tokenbooking.admin.comparator.DateAndFromTimeComparatorImp;
+import tokenbooking.admin.comparator.WaitingTimeComparator;
 import tokenbooking.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,8 @@ import tokenbooking.model.*;
 import tokenbooking.repository.*;
 import tokenbooking.service.BookingService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,14 +73,17 @@ public class AdminSessionService {
         if (sessionDetails == null) {
             throw new AdminException("Session not found " + sessionId);
         }
-
-        if (SessionStatus.INPROGRESS != sessionDetails.getStatus()) {
+        if (SessionStatus.CANCELLED == sessionDetails.getStatus() || SessionStatus.FINISHED == sessionDetails.getStatus()) {
+            throw new AdminException("Session already cancelled or finished " + sessionId);
+        }
+        if (SessionStatus.ACTIVE == sessionDetails.getStatus()) {
             throw new AdminException("Session not started " + sessionId);
-        } else {
-            BookingDetails previousBookingDetails = completePreviousToken(sessionId);
-            BookingDetails nextBooking = bookingService.getSubmittedBookingOfLeastTokenNumber(sessionId);
-            TokenInfo tokenInfo = null;
+        }
 
+        TokenInfo tokenInfo = null;
+        if (SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
+            BookingDetails previousBookingDetails = completePreviousToken(sessionId);
+            BookingDetails nextBooking = getNextAvailableBooking(sessionId);
             if (nextBooking != null) {
                 setSequenceNumber(previousBookingDetails, nextBooking);
                 tokenInfo = getTokenInfo(nextBooking, sessionDetails);
@@ -88,9 +92,8 @@ public class AdminSessionService {
                 tokenInfo = getTokenInfo(previousBookingDetails, sessionDetails);
                 tokenInfo.setHasMoreTokens(false);
             }
-
-            return tokenInfo;
         }
+        return tokenInfo;
     }
 
     @Transactional()
@@ -163,6 +166,65 @@ public class AdminSessionService {
             tokenInfo.setHasMoreTokens(true);
         }
         return tokenInfo;
+    }
+
+    private BookingDetails getNextAvailableBooking(UUID sessionId) {
+        List<BookingDetails> allSubmittedBookings = bookingService.getAllSubmittedBooking(sessionId);
+        if (allSubmittedBookings.isEmpty()) {
+            return null;
+        }
+
+        List<BookingDetails> onTimeSubmittedBookings = getOnTimeSubmittedBookings(allSubmittedBookings);
+
+        if (onTimeSubmittedBookings.size() >= 1) {
+
+            List<BookingDetails> eligibleForTurnBookings = getEligibleForTurnBooking(onTimeSubmittedBookings);
+            if (eligibleForTurnBookings.size() >= 1) {
+
+                eligibleForTurnBookings.sort(new WaitingTimeComparator());
+
+                return eligibleForTurnBookings.iterator().next();
+            } else {
+                BookingDetails bookingDetailsFromWaitingList = getNextBookingFromWaitingList(allSubmittedBookings, onTimeSubmittedBookings);
+                if (bookingDetailsFromWaitingList == null) {
+                    List<BookingDetails> notEligibleBookingList = getNotEligibleBooingList(onTimeSubmittedBookings,eligibleForTurnBookings);
+                    if (notEligibleBookingList.isEmpty()) {
+                        throw new AdminException("Fatal token scheduling error");
+                    }
+                    notEligibleBookingList.sort(new WaitingTimeComparator());
+                    return notEligibleBookingList.iterator().next();
+                } else {
+                    return bookingDetailsFromWaitingList;
+                }
+            }
+
+        } else {
+            return getNextBookingFromWaitingList(allSubmittedBookings, onTimeSubmittedBookings);
+        }
+    }
+
+    private List<BookingDetails> getNotEligibleBooingList(List<BookingDetails> onTimeSubmittedBookings, List<BookingDetails> eligibleForTurnBookings) {
+        return onTimeSubmittedBookings.stream().filter(booking -> !eligibleForTurnBookings.contains(booking)).collect(Collectors.toList());
+    }
+
+    private BookingDetails getNextBookingFromWaitingList(List<BookingDetails> allSubmittedBookings, List<BookingDetails> onTimeSubmittedBookings) {
+        List<BookingDetails> lateSubmittedBookings = allSubmittedBookings.stream().filter(booking -> !onTimeSubmittedBookings.contains(booking)).collect(Collectors.toList());
+
+        if (lateSubmittedBookings.isEmpty()) {
+            return null;
+        }
+
+        lateSubmittedBookings.sort(new WaitingTimeComparator());
+
+        return lateSubmittedBookings.iterator().next();
+    }
+
+    private List<BookingDetails> getEligibleForTurnBooking(List<BookingDetails> onTimeSubmittedBookings) {
+        return onTimeSubmittedBookings.stream().filter(booking -> LocalTime.now().isAfter(booking.getRecommendedTime())).collect(Collectors.toList());
+    }
+
+    private List<BookingDetails> getOnTimeSubmittedBookings(List<BookingDetails> allSubmittedBookings) {
+        return allSubmittedBookings.stream().filter(booking -> booking.getSubmittedDate().toLocalTime().isBefore(booking.getRecommendedTime().plusMinutes(ALLOWED_LATE_MINUTES))).collect(Collectors.toList());
     }
 
     private void setCompletionValueAndFinishSession(SessionDetails sessionDetails) {

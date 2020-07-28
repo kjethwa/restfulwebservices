@@ -17,6 +17,8 @@ public interface BookingRepository extends JpaRepository<BookingDetails, UUID> {
 
     Collection<BookingDetails> findByUserId(UUID userId);
 
+    List<BookingDetails> findAllBySessionIdAndStatusIn(UUID sessionId, List<BookingStatus> status);
+
     BookingDetails findFirstBySessionIdAndSequenceNumberNotNullOrderBySequenceNumberDesc(UUID sessionId);
 
     BookingDetails findFirstBySessionIdAndStatusOrderByTokenNumberAsc(UUID sessionId, BookingStatus status);
