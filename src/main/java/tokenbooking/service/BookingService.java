@@ -9,10 +9,12 @@ import tokenbooking.model.*;
 import tokenbooking.repository.*;
 import tokenbooking.utils.HelperUtil;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static tokenbooking.model.Constants.*;
 
 @Service
@@ -53,7 +55,11 @@ public class BookingService {
 
             // set recommended time
             Client client = clientRepository.findById(sessionDetails.getClientId()).get();
-            bookingDetails.setRecommendedTime(getRecommendedTime(bookingDetails, sessionDetails ,client.getClientConfigurationSetting()));
+            LocalTime recommendedTime = getRecommendedTime(sessionDetails, client.getClientConfigurationSetting());
+            if (recommendedTime == null) {
+                throw new Exception("No tokens available");
+            }
+            bookingDetails.setRecommendedTime(recommendedTime);
 
             // Save bookings
             saveTokenDetails(bookingDetails);
@@ -169,10 +175,43 @@ public class BookingService {
         bookingRepository.save(bookingDetails);
     }
 
-    private LocalTime getRecommendedTime(BookingDetails bookingDetails, SessionDetails sessionDetails, ClientConfigurationSetting clientConfigurationSetting) {
+    private LocalTime getRecommendedTime(SessionDetails sessionDetails, ClientConfigurationSetting clientConfigurationSetting) {
+        LocalTime recommendedTime;
         LocalTime startTime = sessionDetails.getFromTime();
+        LocalTime endTime = sessionDetails.getToTime();
+        Integer sessionTimeInMinutes = Math.toIntExact(MINUTES.between(startTime, endTime));
+
+        // Assumption : session time is in multiple of slot minutes.
+        int noOfSlot = sessionTimeInMinutes/SLOT_MINUTES;
         Integer noOfTokensInQuarter = clientConfigurationSetting.getNoOfTokensPerQuarter();
-        LocalTime recommendedTime = startTime.plusMinutes(((bookingDetails.getTokenNumber() / noOfTokensInQuarter) * QUARTER_MINUTES));
+
+        List<BookingDetails> bookingDetailsList = bookingRepository.findAllBySessionIdAndStatusIn(sessionDetails.getSessionId(),Arrays.asList(BookingStatus.BOOKED,BookingStatus.SUBMITTED,BookingStatus.COMPLETED));
+        Map<Integer,Integer> recommendedTimeMap = new TreeMap<>();
+        bookingDetailsList.forEach( booking -> {
+            Duration duration = Duration.between(sessionDetails.getFromTime(), booking.getRecommendedTime());
+            Integer slot = Math.toIntExact(duration.toMinutes() / SLOT_MINUTES);
+            recommendedTimeMap.merge(slot, 1, Integer::sum);
+        });
+
+        int availableSlot = -1;
+        for (int i = 0; i < noOfSlot; i++) {
+            if (recommendedTimeMap.get(i) == null || recommendedTimeMap.get(i) < noOfTokensInQuarter) {
+                if (sessionDetails.getDate().isEqual(HelperUtil.getCurrentDate())) {
+                    if (HelperUtil.getCurrentTime().isAfter(startTime.plusMinutes(i * SLOT_MINUTES))) {
+                        continue;
+                    }
+                }
+                availableSlot = i;
+                break;
+            }
+        }
+
+        if(availableSlot == -1) {
+            return null;
+        } else {
+            recommendedTime = startTime.plusMinutes(availableSlot * SLOT_MINUTES);
+        }
+
         return recommendedTime;
     }
 
