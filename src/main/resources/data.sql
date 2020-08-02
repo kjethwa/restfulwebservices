@@ -65,5 +65,5 @@ insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b
 insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c51','Test User2','testuser2@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
 insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c52','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c51');
 
-insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c53','Test User2','testuser5@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
+insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c53','Test User5','testuser5@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
 insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c54','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c53');

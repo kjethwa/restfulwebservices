@@ -83,12 +83,19 @@ public class BookingService {
         return bookingSummaryList;
     }
 
-    public BookingSummary cancelBooking(UUID bookingId) {
+    @Transactional
+    public synchronized BookingSummary cancelBooking(UUID bookingId) {
         BookingDetails bookingDetails = bookingRepository.findById(bookingId).get();
         bookingDetails.setStatus(BookingStatus.CANCELLED);
         bookingDetails.setCancelledDate(LocalDateTime.now());
         bookingRepository.save(bookingDetails);
 
+        Optional<SessionDetails> sessionDetailsOptional = sessionDetailsRepository.findById(bookingDetails.getSessionId());
+        if (sessionDetailsOptional.isPresent()) {
+            SessionDetails sessionDetails = sessionDetailsOptional.get();
+            sessionDetails.setAvailableToken(sessionDetails.getAvailableToken() + 1);
+            sessionDetailsRepository.save(sessionDetails);
+        }
         return getBookingSummary(bookingDetails);
     }
 
@@ -217,10 +224,7 @@ public class BookingService {
 
     private synchronized void updateBookingDetailsInSession(SessionDetails sessionDetails) {
         sessionDetails.setAvailableToken(sessionDetails.getAvailableToken() - 1);
-        if (sessionDetails.getAvailableToken() == 0)
-            sessionDetails.setNextAvailableToken(-1);
-        else
-            sessionDetails.setNextAvailableToken(sessionDetails.getNextAvailableToken() + 1);
+        sessionDetails.setNextAvailableToken(sessionDetails.getNextAvailableToken() + 1);
 
         sessionDetailsRepository.save(sessionDetails);
     }
