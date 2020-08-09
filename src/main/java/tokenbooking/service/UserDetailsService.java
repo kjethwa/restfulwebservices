@@ -3,6 +3,7 @@ package tokenbooking.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import tokenbooking.model.UserDetails;
 import tokenbooking.model.UserRole;
@@ -25,7 +26,7 @@ public class UserDetailsService {
         return userDetailsRepository.findById(id).get();
     }
 
-    public UserDetails saveUserDetails(UserDetails userDetailsDetails) throws Exception {
+    public UserDetails registerUser(UserDetails userDetailsDetails) throws Exception {
 
         validate(userDetailsDetails);
 
@@ -40,6 +41,15 @@ public class UserDetailsService {
 
         userRoleRepository.save(userRole);
         return userDetails;
+    }
+
+    public void saveUserDetails(UserDetails userDetailsDetails) throws Exception {
+        if (!StringUtils.isEmpty(userDetailsDetails.getLoginId())) {
+            UserDetails temp = userDetailsRepository.findByLoginId(userDetailsDetails.getLoginId());
+            if (temp == null) {
+                userDetailsRepository.save(userDetailsDetails);
+            }
+        }
     }
 
     private void validate(UserDetails userDetailsDetails) throws Exception {

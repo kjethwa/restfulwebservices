@@ -50,20 +50,8 @@ insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,cl
 insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c47',6,'18:00',5,'18:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 insert into client_operation (operation_id,day,from_time,no_of_tokens,to_time,client_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c48',0,'18:00',5,'18:30','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 
-insert into user_details(user_id,full_name,login_id,password,phone_number,status,client_id) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c29','Kalpesh Jethwa','kalpeshjethwa92@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',9594267520,'ACTIVE','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
+/*insert into user_details(user_id,full_name,login_id,password,phone_number,status,client_id) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c29','Kalpesh Jethwa','kalpeshjethwa92@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',9594267520,'ACTIVE','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c30','ROLE_ADMIN','64f2ab89-141d-4cd5-8bd7-f1fac3b18c29');
+*/
+insert into user_details(user_id,full_name,login_id,client_id) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c31','Test User1','714d3bbf-00b4-4c7e-9592-a34326852dd6','64f2ab89-141d-4cd5-8bd7-f1fac3b18c00');
 
-insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c31','Test User3','testuser3@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8286822206,'ACTIVE');
-insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c32','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c31');
-
-insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c33','Test User4','testuser4@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
-insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c34','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c33');
-
-insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c49','Test User1','testuser1@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
-insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c50','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c49');
-
-insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c51','Test User2','testuser2@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
-insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c52','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c51');
-
-insert into user_details(user_id,full_name,login_id,password,phone_number,status) values('64f2ab89-141d-4cd5-8bd7-f1fac3b18c53','Test User5','testuser5@gmail.com','$2a$10$tZIXnqfNOX5hdtwLUfHm9u4CjbryhUNV1oKgWAv59FglMjMG/75/q',8898234546,'ACTIVE');
-insert into user_role(id,role,user_id) values ( '64f2ab89-141d-4cd5-8bd7-f1fac3b18c54','ROLE_USER','64f2ab89-141d-4cd5-8bd7-f1fac3b18c53');

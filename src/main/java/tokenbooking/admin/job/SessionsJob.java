@@ -7,20 +7,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokenbooking.admin.service.AdminSessionService;
-import tokenbooking.model.Client;
-import tokenbooking.model.ClientOperation;
-import tokenbooking.model.SessionDetails;
-import tokenbooking.model.SessionStatus;
+import tokenbooking.model.*;
 import tokenbooking.repository.ClientNameAndId;
 import tokenbooking.repository.SessionDetailsRepository;
 import tokenbooking.service.ClientService;
 import tokenbooking.utils.HelperUtil;
 
+import javax.annotation.PostConstruct;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static tokenbooking.model.Constants.*;
 import static tokenbooking.model.Constants.MAX_DAYS_OF_SESSION;
 
@@ -36,6 +35,7 @@ public class SessionsJob {
     @Autowired
     AdminSessionService adminSessionService;
 
+
     private static Logger LOG = LoggerFactory.getLogger(SessionsJob.class);
 
     @Scheduled(cron = "0 10/60 * * * *")
@@ -47,24 +47,21 @@ public class SessionsJob {
         while(iterator.hasNext()) {
             ClientNameAndId clientNameAndId = iterator.next();
             UUID clientId = clientNameAndId.getClientId();
-            Integer createdSessionCount = 0 ;
+            int createdSessionCount = 0 ;
             List<SessionDetails> allAvailableSessions = new ArrayList<>(sessionDetailsRepository.findByClientIdAndDateBetween(clientId, HelperUtil.getCurrentDate(), HelperUtil.getEndDate()));
             Client client = clientService.getClientById(clientId);
+            ClientConfigurationSetting clientConfigurationSetting = client.getClientConfigurationSetting();
             List<ClientOperation> daysOfOperation = client.getDaysOfOperation();
             Map<DayOfWeek, List<ClientOperation>> mapOfDaysOfOperation = new HashMap<>();
             for (ClientOperation clientOperation : daysOfOperation) {
-                if (mapOfDaysOfOperation.get(clientOperation.getDay()) == null) {
-                    mapOfDaysOfOperation.put(clientOperation.getDay(), new ArrayList<>());
-                }
+                mapOfDaysOfOperation.computeIfAbsent(clientOperation.getDay(), k -> new ArrayList<>());
                 mapOfDaysOfOperation.get(clientOperation.getDay()).add(clientOperation);
             }
 
             //create Map for currently available sessions
             Map<LocalDate, List<SessionDetails>> mapOfSessions = new TreeMap<>();
             for (SessionDetails sessionDetails : allAvailableSessions) {
-                if (mapOfSessions.get(sessionDetails.getDate()) == null) {
-                    mapOfSessions.put(sessionDetails.getDate(), new ArrayList<>());
-                }
+                mapOfSessions.computeIfAbsent(sessionDetails.getDate(), k -> new ArrayList<>());
                 mapOfSessions.get(sessionDetails.getDate()).add(sessionDetails);
             }
 
@@ -79,7 +76,7 @@ public class SessionsJob {
                     Set<UUID> finalPresentOperationIds = presentOperationIds;
                     List<ClientOperation> clientOperationsToBeCreated = mapOfDaysOfOperation.get(nextDate.getDayOfWeek()).stream().filter(s -> !finalPresentOperationIds.contains(s.getOperationId())).collect(Collectors.toList());
 
-                    createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId);
+                    createSession(allAvailableSessions, nextDate, clientOperationsToBeCreated, clientId, clientConfigurationSetting);
                     createdSessionCount += clientOperationsToBeCreated.size();
                 }
 
@@ -113,7 +110,14 @@ public class SessionsJob {
         LOG.info("Finished cancel or complete old sessions job");
     }
 
-    private void createSession(List<SessionDetails> allAvailableSessions, LocalDate nextDate, List<ClientOperation> clientOperations, UUID clientId) {
+    /*@PostConstruct
+    @Transactional()
+    public void init() {
+        checkAllSessionIsPresentOrCreate();
+        cancelOrCompleteOldSessions();
+    }*/
+
+    private void createSession(List<SessionDetails> allAvailableSessions, LocalDate nextDate, List<ClientOperation> clientOperations, UUID clientId, ClientConfigurationSetting clientConfigurationSetting) {
         for (ClientOperation clientOperation : clientOperations) {
             SessionDetails sessionDetails = new SessionDetails();
             sessionDetails.setClientId(clientId);
@@ -123,10 +127,16 @@ public class SessionsJob {
             sessionDetails.setFromTime(clientOperation.getFromTime());
             sessionDetails.setToTime(clientOperation.getToTime());
             sessionDetails.setNoOfTokens(clientOperation.getNoOfTokens());
-            sessionDetails.setAvailableToken(clientOperation.getNoOfTokens());
+            int totalAvailableToken = getTotalAvailableToken(clientOperation, clientConfigurationSetting.getNoOfTokensPerQuarter());
+            sessionDetails.setAvailableToken(totalAvailableToken);
             sessionDetails.setNextAvailableToken(START_TOKEN_NUMBER);
-
             allAvailableSessions.add(sessionDetailsRepository.save(sessionDetails));
         }
+    }
+
+    private int getTotalAvailableToken(ClientOperation clientOperation, Integer noOfTokensPerQuarter) {
+        int sessionMinutes = Math.toIntExact(MINUTES.between(clientOperation.getFromTime(), clientOperation.getToTime()));
+        int noOfSlots = sessionMinutes / SLOT_MINUTES;
+        return noOfTokensPerQuarter * noOfSlots;
     }
 }

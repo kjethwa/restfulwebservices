@@ -31,6 +31,18 @@ public class UserController {
 
     @PostMapping("/register")
     @CrossOrigin(origins = "http://localhost:4201")
+    public ResponseEntity<ResponseMessage> register(@RequestBody UserDetails userDetails) {
+        try {
+            userDetailsService.registerUser(userDetails);
+            return new ResponseEntity(new ResponseMessage("Registered successfully", ResponseStatus.SUCCESS), HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.warn(e.toString());
+            return new ResponseEntity(new ResponseMessage(null,e.getMessage(), ResponseStatus.FAILURE), HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/saveUserDetails")
+    @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<ResponseMessage> saveUserDetails(@RequestBody UserDetails userDetails) {
         try {
             userDetailsService.saveUserDetails(userDetails);

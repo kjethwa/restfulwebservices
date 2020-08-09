@@ -10,11 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tokenbooking.admin.service.MyUserDetailsService;
-import tokenbooking.filter.JwtRequestFilter;
+import tokenbooking.filter.AwsCognitoJwtAuthFilter;
 
 @EnableWebSecurity
 public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -22,8 +21,11 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Autowired
     MyUserDetailsService myUserDetailsService;
 
+/*    @Autowired
+    JwtRequestFilter jwtRequestFilter;*/
+
     @Autowired
-    JwtRequestFilter jwtRequestFilter;
+    private AwsCognitoJwtAuthFilter awsCognitoJwtAuthenticationFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -47,7 +49,7 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-       http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+       http.addFilterBefore(awsCognitoJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
