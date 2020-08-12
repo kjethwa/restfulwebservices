@@ -29,7 +29,7 @@ public class UserController {
         return userDetailsService.getUser(userId);
     }
 
-    @PostMapping("/register")
+/*    @PostMapping("/register")
     @CrossOrigin(origins = "http://localhost:4201")
     public ResponseEntity<ResponseMessage> register(@RequestBody UserDetails userDetails) {
         try {
@@ -39,7 +39,7 @@ public class UserController {
             LOG.warn(e.toString());
             return new ResponseEntity(new ResponseMessage(null,e.getMessage(), ResponseStatus.FAILURE), HttpStatus.OK);
         }
-    }
+    }*/
 
     @PostMapping("/saveUserDetails")
     @CrossOrigin(origins = "http://localhost:4201")

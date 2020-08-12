@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
@@ -56,5 +58,15 @@ class AppConfig {
         JWSKeySelector keySelector= new JWSVerificationKeySelector(RS256, keySource);
         jwtProcessor.setJWSKeySelector(keySelector);
         return jwtProcessor;
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedMethods("*").allowedOrigins("*");
+            }
+        };
     }
 }

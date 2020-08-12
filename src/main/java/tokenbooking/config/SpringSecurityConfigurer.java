@@ -41,8 +41,8 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*.map").permitAll()
                 .antMatchers("/*.ico").permitAll()
                 .antMatchers("/*.png").permitAll()
-                .antMatchers("/base/client/**").permitAll()
-                .antMatchers("/auth/*").permitAll()
+                .antMatchers("/base/**").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .antMatchers("/enduserapi/**").hasAnyRole("USER","SUPER_ADMIN")
                 .antMatchers("/admin/**").hasAnyRole("ADMIN","SUPER_ADMIN")
                 .anyRequest().authenticated().and()
@@ -52,11 +52,11 @@ public class SpringSecurityConfigurer extends WebSecurityConfigurerAdapter {
        http.addFilterBefore(awsCognitoJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Override
+/*    @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/resources/static/**"); // #3
-    }
+    }*/
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
