@@ -116,6 +116,7 @@ public class AdminSessionService {
             bookingRepository.updateBookingStatusOfSessionId(BookingStatus.EXPIRED, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED, BookingStatus.SUBMITTED));
         } else if (SessionStatus.INPROGRESS == sessionDetails.getStatus()) {
             bookingRepository.updateBookingStatusOfSessionId(BookingStatus.EXPIRED, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.BOOKED));
+            // Below condition should never occur. because a customer will be at the clients place and also have submitted the token for his/her turn.
             bookingRepository.updateBookingStatusOfSessionId(BookingStatus.CANCELLED_BY_ADMIN, sessionDetails.getSessionId(), Arrays.asList(BookingStatus.SUBMITTED));
         }
 
