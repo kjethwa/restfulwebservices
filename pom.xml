@@ -81,7 +81,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
-      <!--<plugin>
+      <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
@@ -97,6 +97,6 @@
               </resources>
             </configuration>
           </execution>
-        </executions> </plugin>-->
+        </executions> </plugin>
     </plugins>
   </build></project>
